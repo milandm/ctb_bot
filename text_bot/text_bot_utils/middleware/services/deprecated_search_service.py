@@ -2,9 +2,8 @@ import sys
 
 sys.path.append("..")
 
-from text_bot.text_bot_utils.middleware.nlp_model.openai_sdk_interceptor import OpenaiSdkInterceptor
-from text_bot.text_bot_utils.middleware.nlp_model.nlp_model import NlpModel
-from text_bot.text_bot_utils.middleware.nlp_model.prompt_template_creator import PromptTemplateCreator
+from text_bot.nlp_model import NlpModel
+from text_bot.nlp_model import PromptTemplateCreator
 from text_bot.ai_utils import is_close
 
 

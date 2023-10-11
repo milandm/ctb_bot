@@ -56,6 +56,7 @@ class DocumentSplit(models.Model):
             )
         ]
 
+    document_filename = models.CharField(max_length=100)
     document_title = models.CharField(max_length=100)
     embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
     text = models.CharField(max_length=1000)

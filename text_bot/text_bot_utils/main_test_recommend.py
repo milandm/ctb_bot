@@ -1,8 +1,8 @@
 from middleware.services.recommendation_service import RecommendationService
-from middleware.nlp_model.openai_sdk_interceptor import OpenaiSdkInterceptor
+from text_bot.nlp_model import OpenaiSdkInterceptor
 
 
-from config import COLLECTION_NAME
+from text_bot.nlp_model.config import COLLECTION_NAME
 
 
 if __name__ == "__main__":

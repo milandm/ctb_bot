@@ -1,24 +1,23 @@
 import openai
 
-from typing import List, Dict, Tuple, Iterable, Type, Union, Callable, Optional, Generator, Any
+from typing import Union, Generator, Any
 from openai.openai_object import OpenAIObject
-from text_bot.text_bot_utils.middleware.nlp_model.nlp_model import NlpModel
+from text_bot.nlp_model.nlp_model import NlpModel
 
 import numpy as np
 from numpy import ndarray
 from tqdm import tqdm
 
-from text_bot.text_bot_utils.config import (
-    COLLECTION_NAME,
+from text_bot.nlp_model.config import (
     OPENAI_API_KEY,
-    QDRANT_API_KEY,
-    QDRANT_HOST,
-    QDRANT_PORT,
 )
+
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.chat_models import ChatOpenAI
 
 OPENAI_NLP_MODEL = "text-embedding-ada-002"
 
-class OpenaiSdkInterceptor(NlpModel):
+class OpenaiModel(NlpModel):
 
     VECTOR_PARAMS_SIZE = 1536
 
@@ -41,6 +40,9 @@ class OpenaiSdkInterceptor(NlpModel):
         #     "references": references,
         # }
 
+    def get_embedding(self, text) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
+        llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
+        openAI_embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
 
 
     def get_embedding(self, text) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
