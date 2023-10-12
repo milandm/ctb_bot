@@ -63,6 +63,7 @@ import os
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import Docx2txtLoader
 from langchain.document_loaders import TextLoader
+from pathlib import Path
 
 def get_base64_string(string_key):
     bytes_s = string_key.encode('utf-8')
@@ -132,20 +133,30 @@ def load_file(file_name: str):
         meditations_json = json.load(file)
         return meditations_json
 
+def get_proper_file_loader(file_path):
+    print("get_proper_file_loader "+ str(file_path))
+    loader = None
+    if file_path.endswith(".pdf"):
+        loader = PyPDFLoader(file_path)
+    elif file_path.endswith('.docx') or file_path.endswith('.doc'):
+        loader = Docx2txtLoader(file_path)
+    elif file_path.endswith('.txt'):
+        loader = TextLoader(file_path)
+    return loader
 
-def load_documents(documents_folder_path):
-    documents = []
-    for file in os.listdir(documents_folder_path):
-        if file.endswith(".pdf"):
-            pdf_path = "./documents/" + file
-            loader = PyPDFLoader(pdf_path)
-            documents.extend(loader.load())
-        elif file.endswith('.docx') or file.endswith('.doc'):
-            doc_path = "./documents/" + file
-            loader = Docx2txtLoader(doc_path)
-            documents.extend(loader.load())
-        elif file.endswith('.txt'):
-            text_path = "./documents/" + file
-            loader = TextLoader(text_path)
-            documents.extend(loader.load())
-    return documents
+def load_documents_and_filenames(documents_folder_path):
+    documents_and_filenames = list()
+    for file_path in os.listdir(documents_folder_path):
+        file = Path(file_path)
+        base_path = os.path.dirname(file.absolute())
+        try:
+            loader = get_proper_file_loader(base_path+"/"+documents_folder_path+file.name)
+            if loader:
+                document = loader.load()
+                # print("document: "+str(document))
+                # print("filename: "+str(file.name))
+                documents_and_filenames.append((document,file.name))
+        except Exception as e:
+            print(e)
+    return documents_and_filenames
+

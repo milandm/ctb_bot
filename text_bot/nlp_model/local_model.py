@@ -55,5 +55,5 @@ class LocalModel(NlpModel):
         self.model.encode(text)
 
 
-    def send_prompt( self, prompt:str ) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
-        return self.nlp_prompt_model.send_prompt(prompt)
+    def send_prompt( self, system_msg:str, user_prompt:str ) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
+        return self.nlp_prompt_model.send_prompt(system_msg, user_prompt)

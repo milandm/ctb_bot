@@ -4,7 +4,6 @@ from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
-from contentful_sync.urls import urlpatterns
 from rest_framework import permissions
 
 
@@ -45,6 +44,5 @@ urlpatterns = [
 
     path('api/v1/textbot/', include('text_bot.urls')),
     path('api/v1/auth/', include('authentication.urls')),
-    path('api/v1/contentful/', include('contentful_sync.urls')),
     path('admin/', admin.site.urls),
 ]

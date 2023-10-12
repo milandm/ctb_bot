@@ -17,5 +17,5 @@ class NlpModel(ABC):
         pass
 
     @abstractmethod
-    def send_prompt( self, prompt:str ) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
+    def send_prompt( self, system_msg:str, user_prompt:str ) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
         pass

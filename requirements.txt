@@ -69,3 +69,5 @@ sentence_transformers
 whitenoise==6.5.0
 openai
 langchain
+pypdf
+docx2txt
