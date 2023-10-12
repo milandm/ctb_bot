@@ -144,19 +144,21 @@ def get_proper_file_loader(file_path):
         loader = TextLoader(file_path)
     return loader
 
-def load_documents_and_filenames(documents_folder_path):
-    documents_and_filenames = list()
+def load_documents(documents_folder_path):
+    documents = list()
     for file_path in os.listdir(documents_folder_path):
         file = Path(file_path)
         base_path = os.path.dirname(file.absolute())
         try:
             loader = get_proper_file_loader(base_path+"/"+documents_folder_path+file.name)
             if loader:
-                document = loader.load()
+                document_pages = loader.load()
+                for page in document_pages:
+                    page.metadata["source"] = file.name
                 # print("document: "+str(document))
                 # print("filename: "+str(file.name))
-                documents_and_filenames.append((document,file.name))
+                documents.extend(document_pages)
         except Exception as e:
             print(e)
-    return documents_and_filenames
+    return documents
 

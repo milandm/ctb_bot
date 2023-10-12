@@ -53,10 +53,10 @@ class UserHistoryManager(models.Manager):
 
 class DocumentSplitManager(models.Manager):
 
-    def add_document_embedding_db(self, document_title, document_text, document_embedding):
-        self.create(document_title = document_title,
-                    text=document_text,
-                    embedding=document_embedding)
+    # def add_document_embedding_db(self, document_title, document_text, document_embedding):
+    #     self.create(document_title = document_title,
+    #                 text=document_text,
+    #                 embedding=document_embedding)
 
     def query_embedding_in_db(self, embedding):
         return self.order_by(L2Distance('embedding', embedding))[:5]
