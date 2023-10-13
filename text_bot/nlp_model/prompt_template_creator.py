@@ -148,6 +148,7 @@ TITLE: <title you extracted>
 ```
 """
 
+TITLE_EXTRACT_KEY = "TITLE:"
 
 
 title_template = """

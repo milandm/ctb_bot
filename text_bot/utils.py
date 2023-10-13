@@ -65,6 +65,45 @@ from langchain.document_loaders import Docx2txtLoader
 from langchain.document_loaders import TextLoader
 from pathlib import Path
 
+
+def extract_value_openai_content(extract_key, openai_response_content):
+    # Define a pattern and find match
+    pattern = re.compile(re.escape(extract_key) + r'\s*(.*)')
+    match = pattern.search(openai_response_content)
+    if match:
+        value = match.group(1)
+    else:
+        value = None
+    return value
+
+
+def parse_openai_response(openai_response):
+    openai_response = json.loads(openai_response)
+    openai_response.get("choices")[0].get("message").get("content")
+# {
+#   "id": "chatcmpl-898dSJDcr3PPCtfcX3FA8WHU8o6hy",
+#   "object": "chat.completion",
+#   "created": 1697188838,
+#   "model": "gpt-3.5-turbo-0613",
+#   "choices": [
+#     {
+#       "index": 0,
+#       "message": {
+#         "role": "assistant",
+#         "content": "TITLE: Uputstvo za popunjavanje kvartalnog izve\u0161taja o toku sprovo\u0111enja klini\u010dkog ispitivanja"
+#       },
+#       "finish_reason": "stop"
+#     }
+#   ],
+#   "usage": {
+#     "prompt_tokens": 446,
+#     "completion_tokens": 38,
+#     "total_tokens": 484
+#   }
+# }
+
+
+
 def get_base64_string(string_key):
     bytes_s = string_key.encode('utf-8')
     base64_bytes = base64.b64encode(bytes_s)

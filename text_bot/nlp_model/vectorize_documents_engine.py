@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from text_bot.nlp_model.config import DATA
 from text_bot.nlp_model.nlp_model import NlpModel
-from text_bot.utils import load_documents
+from text_bot.utils import load_documents, extract_value_openai_content
 
 BOOK_FILENAME = "Marcus_Aurelius_Antoninus_-_His_Meditations_concerning_himselfe"
 
@@ -19,7 +19,7 @@ SENTENCE_MIN_LENGTH = 2
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from text_bot.views.models import DocumentSplit
-from text_bot.nlp_model.prompt_template_creator import PromptTemplateCreator, SYSTEM_MSG_TITLE
+from text_bot.nlp_model.prompt_template_creator import PromptTemplateCreator, SYSTEM_MSG_TITLE, TITLE_EXTRACT_KEY
 
 class VectorizeDocumentsEngine:
 
@@ -33,7 +33,10 @@ class VectorizeDocumentsEngine:
         for document_pages in documents:
 
             documents_splits = self.text_splitter.split_documents(document_pages)
-            document_title = self.get_document_title(documents_splits[0])
+
+            document_title_openai_response  = self.get_document_title(documents_splits[0])
+            document_title_content = document_title_openai_response.get("choices")[0].get("message").get("content")
+            document_title = extract_value_openai_content(TITLE_EXTRACT_KEY, document_title_content)
 
             for documents_split in documents_splits:
 
