@@ -55,7 +55,7 @@ class VectorizeDocumentsEngine:
                 print("Document page: ", page)
                 print("Document text_split_compression: ", text_split_compression)
 
-                embedding = self.model.get_embeddings(text)
+                embedding = self.model.get_embedding(text)
 
                 DocumentSplit.objects.create(
                         filename=filename,
@@ -80,6 +80,6 @@ class VectorizeDocumentsEngine:
         text_compression_content = text_compression_openai_response.get("choices")[0].get("message").get("content")
         text_compression = extract_value_openai_content(COMPRESSION_EXTRACT_KEY, text_compression_content)
 
-        return text_compression
+        return text_compression[1:-1]
 
 

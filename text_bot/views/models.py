@@ -21,7 +21,7 @@ class UserHistory(models.Model):
         ordering = ['-id']
 
 # multi-qa-distilbert-cos-v1
-MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE = 768
+MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE = 1536
 class ChatQuestion(models.Model):
 
     class Meta:
