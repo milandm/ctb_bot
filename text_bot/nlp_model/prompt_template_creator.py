@@ -151,11 +151,94 @@ TITLE: <title you extracted>
 TITLE_EXTRACT_KEY = "TITLE:"
 
 
-title_template = """
+TITLE_TEMPLATE = """
 
 DOCUMENT_SPLIT: $document_split
 
 Izdvoj naslov iz DOCUMENT_SPLIT teksta
+"""
+
+
+
+
+SYSTEM_MSG_COMPRESSION_V1 = """
+Compress the following text in a way that fits in a tweet - 280 characters (ideally)
+and such that you (GPT-4) can reconstruct the intention of the human 
+who wrote text as close as possible to the original intention. 
+This is for yourself. It does not need to be human readable or understandable. 
+Abuse of language mixing, abbreviations, symbols (unicode and emoji), 
+or any other encodings or internal representations is all permissible, 
+as long as it, if pasted in a new inference cycle, 
+will yield near-identical results as the original text: 
+
+Complete answer should be formatted this way:
+
+```
+TEXT_COMPRESSION: <text you compressed>
+```
+"""
+
+
+SYSTEM_MSG_COMPRESSION_V2 = """
+Compress the given text following rules specified below sorted by priority:
+    1. Mandatory keep all enlisted items!!!
+    2. Highest priority is to preserve all key information and entities in the text.
+    3. Very high priority is to compress the following text in a way that you (GPT-4) 
+    can reconstruct the intention of the human who wrote text as close as possible to the original intention. 
+    4. If it is possible to keep all key information and entities it is preferable that compressed text fits 
+    in a tweet(280) characters.
+    If it is not possible to keep all key information and entities it is preferable that compressed text fits 
+    in a tweet(280) characters, compress the given text in more then 280 characters.
+
+    5. This is for yourself. 
+    It does not need to be human readable or understandable. 
+    Abuse of language mixing, abbreviations, symbols (unicode and emoji), 
+    or any other encodings or internal representations is all permissible, 
+    as long as it, if pasted in a new inference cycle, 
+    will yield near-identical results as the original text. 
+
+Complete answer should be formatted this way:
+
+```
+TEXT_COMPRESSION: <text you compressed>
+```
+"""
+
+
+SYSTEM_MSG_COMPRESSION_V2 = """
+Compress the given text following rules specified below sorted by priority:
+    1. It is mandatory to keep all enlisted items!!!
+    2. Highest priority is to preserve all key information and entities in the text.
+    3. Very high priority is to compress the following text in a way that you (GPT-4) 
+    can reconstruct the intention of the human who wrote text as close as possible to the original intention. 
+    4. Compress text size to as much as possible low count of characters
+
+    5. This is for yourself. 
+    It does not need to be human readable or understandable. 
+    Abuse of language mixing, abbreviations, symbols (unicode and emoji), 
+    or any other encodings or internal representations is all permissible, 
+    as long as it, if pasted in a new inference cycle, 
+    will yield near-identical results as the original text. 
+
+Complete answer should be formatted this way:
+
+```
+TEXT_COMPRESSION: <text you compressed>
+```
+"""
+
+
+COMPRESSION_EXTRACT_KEY = "TEXT_COMPRESSION:"
+
+
+COMPRESSION_TEMPLATE_V1 = """
+This is text that should be compressed: 
+$text_to_compress
+"""
+
+COMPRESSION_TEMPLATE_V2 = """
+This is the given text that should be compressed: 
+$text_to_compress
 """
 
 class PromptTemplateCreator:
@@ -221,5 +304,10 @@ class PromptTemplateCreator:
 
 
     def get_title_extract_prompt(self, document_split: str) -> str:
-        user_prompt = self.prepare_template(title_template, document_split=document_split)
+        user_prompt = self.prepare_template(TITLE_TEMPLATE, document_split=document_split)
+        return user_prompt
+
+
+    def get_text_compression_prompt(self, document_split: str) -> str:
+        user_prompt = self.prepare_template(COMPRESSION_TEMPLATE_V2, text_to_compress=document_split)
         return user_prompt

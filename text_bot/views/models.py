@@ -60,6 +60,7 @@ class DocumentSplit(models.Model):
     title = models.CharField(max_length=100)
     embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
     text = models.CharField(max_length=1000)
+    text_compression = models.CharField(max_length=500)
     page = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
