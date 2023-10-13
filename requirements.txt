@@ -71,3 +71,4 @@ openai
 langchain
 pypdf
 docx2txt
+tiktoken

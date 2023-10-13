@@ -157,7 +157,7 @@ def load_documents(documents_folder_path):
                     page.metadata["source"] = file.name
                 # print("document: "+str(document))
                 # print("filename: "+str(file.name))
-                documents.extend(document_pages)
+                documents.append(document_pages)
         except Exception as e:
             print(e)
     return documents

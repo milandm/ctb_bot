@@ -13,7 +13,9 @@ from langchain.chat_models import ChatOpenAI
 
 SYSTEM_MSG = 'Ti si ekspert za zakone u oblasti klinickih istrazivanja.'
 EMBEDDING_MODEL = "text-embedding-ada-002"
-LLM_MODEL = "gpt-3.5-turbo"
+# LLM_MODEL = "gpt-3.5-turbo"
+LLM_MODEL = "gpt-4"
+
 
 class OpenaiModel(NlpModel):
 

@@ -26,36 +26,32 @@ class VectorizeDocumentsEngine:
     def __init__(self, nlp_model :NlpModel):
         self.model = nlp_model
         self.prompt_template_creator = PromptTemplateCreator()
-
-    def get_documents_splits(self, document):
-        # MarkdownHeaderTextSplitter
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=500)
-        documents_splits = text_splitter.split_documents(document)
-        return documents_splits
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=500)
 
     def get_documents_splits(self):
         documents = load_documents("documents/")
-        for document_page in documents:
-            filename = document_page.metadata["source"]
-            page = document_page.metadata["page"]
-            document = document_page.page_content
-            print("document: "+str(document))
-            documents_splits = self.get_documents_splits(document)
+        for document_pages in documents:
+
+            documents_splits = self.text_splitter.split_documents(document_pages)
             document_title = self.get_document_title(documents_splits[0])
 
             for documents_split in documents_splits:
 
+                filename = documents_split.metadata["source"]
+                page = documents_split.metadata["page"]
+                text = documents_split.page_content
+
                 print("Document title: ", document_title)
                 print("Document filename: ", filename)
-                print("Document text: ", documents_split)
+                print("Document text: ", text)
                 print("Document page: ", page)
 
-                embedding = self.model.get_embeddings(documents_split)
+                embedding = self.model.get_embeddings(text)
 
                 DocumentSplit.objects.create(
                         filename=filename,
                         title=document_title,
-                        text=documents_split,
+                        text=text,
                         embedding=embedding,
                         page = page)
 
