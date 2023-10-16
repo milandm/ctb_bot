@@ -66,6 +66,11 @@ from langchain.document_loaders import TextLoader
 from pathlib import Path
 
 
+def remove_quotes(s):
+    if s.startswith('"') and s.endswith('"'):
+        return s[1:-1]
+    return s
+
 def extract_value_openai_content(extract_key, openai_response_content):
     # Define a pattern and find match
     pattern = re.compile(re.escape(extract_key) + r'\s*(.*)')
