@@ -30,16 +30,14 @@ class PromptCreator:
         self.prompt_template_creator = PromptTemplateCreator()
 
 
-    def get_document_title(self, first_documents_split):
-        first_documents_split_txt = first_documents_split.page_content
+    def get_document_title(self, first_documents_split_txt: str):
         title_extract_prompt = self.prompt_template_creator.get_title_extract_prompt(first_documents_split_txt)
         document_title_openai_response = self.model.send_prompt(SYSTEM_MSG_TITLE, title_extract_prompt)
         document_title_content = document_title_openai_response.get("choices")[0].get("message").get("content")
         document_title = extract_value_openai_content(TITLE_EXTRACT_KEY, document_title_content)
         return document_title
 
-    def get_text_compression(self, documents_split):
-        documents_split_txt = documents_split.page_content
+    def get_text_compression(self, documents_split_txt: str):
         documents_split_txt = self.clean_documents_split(documents_split_txt)
         text_compression_prompt = self.prompt_template_creator.get_text_compression_prompt(documents_split_txt)
         text_compression_openai_response = self.model.send_prompt(SYSTEM_MSG_COMPRESSION_V2, text_compression_prompt)

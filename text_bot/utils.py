@@ -71,14 +71,9 @@ def remove_quotes(s):
         return s[1:-1]
     return s
 
-def extract_value_openai_content(extract_key, openai_response_content):
+def extract_value_openai_content(extract_key: str, openai_response_content: str):
     # Define a pattern and find match
-    pattern = re.compile(re.escape(extract_key) + r'\s*(.*)')
-    match = pattern.search(openai_response_content)
-    if match:
-        value = match.group(1)
-    else:
-        value = None
+    value = openai_response_content.replace(extract_key,"")
     return value
 
 

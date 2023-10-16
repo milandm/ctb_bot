@@ -126,15 +126,15 @@ Treba da navedes dokument u kom si pronasao odgovor.
 Odgovor treba da bude u dole zadatom formatu:
 
 ```
-QUESTION: <the question>
-=========
-<Source of information 1>
-...
-<Source of information N>
-=========
-ANSWER: <you provide your answer here. Always use bullet points.>
-
-SOURCES: <list the sources used from those provided above>
+RESULT: {
+    "question": <the question>,
+    "answer": <you provide your answer here. Always use bullet points.>,
+    "sources": [
+        <list the sources used from those provided above>
+        <Source of information 1>,
+        ...
+        <Source of information N>
+    ]}
 ```
 """
 
