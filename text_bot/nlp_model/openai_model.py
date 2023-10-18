@@ -28,12 +28,41 @@ class OpenaiModel(NlpModel):
 
     def send_prompt( self, system_msg:str, user_prompt:str ):
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            # model="gpt-3.5-turbo",
+            model=LLM_MODEL,
             messages=[{"role": "system", "content": system_msg},
                        {"role": "user", "content": user_prompt}],
-            max_tokens=250,
+            max_tokens = 1024,
             temperature=0,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
+
+        # {
+        #     "model": "gpt-4",
+        #     "messages": [
+        #         {"role": "system", "content": "Set the behavior"},
+        #         {"role": "assistant", "content": "Provide examples"},
+        #         {"role": "user", "content": "Set the instructions"}
+        #     ],
+        #     "temperature": 0.05,
+        #     "max_tokens": 256,
+        #     "top_p": 1,
+        #     "frequency_penalty": 0,
+        #     "presence_penalty": 0
+        # }
+
+        # completion = openai.Completion.create(
+        #     engine="text-davinci-003",
+        #     prompt=prompt,
+        #     max_tokens=1024,
+        #     temperature=0.1,
+        #     top_p=1,
+        #     frequency_penalty=0,
+        #     presence_penalty=0
+        # )
+
         return response
 
     def get_embedding(self, text):

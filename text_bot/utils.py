@@ -65,7 +65,6 @@ from langchain.document_loaders import Docx2txtLoader
 from langchain.document_loaders import TextLoader
 from pathlib import Path
 
-
 def remove_quotes(s):
     if s.startswith('"') and s.endswith('"'):
         return s[1:-1]
@@ -78,16 +77,12 @@ def extract_single_value_openai_content(openai_response_content: str, extract_ke
 
 
 def extract_values_openai_content(openai_response_content: str, extract_key1="COMMENT", extract_key2="NEW_RESPONSE"):
-    key1_pattern = rf'{extract_key1}: (.*?)\s*(?={extract_key2}:|$)'
-    key2_pattern = rf'{extract_key2}: (.*)'
+    extract_list1 = openai_response_content.split(extract_key1)
+    if len(extract_list1) > 1:
+        extract_value1 = openai_response_content.split(extract_key1)[1].split(extract_key2)[0]
+    extract_value2 = openai_response_content.split(extract_key2)
+    return extract_value1, extract_value2
 
-    key1_match = re.search(key1_pattern, openai_response_content, re.DOTALL)
-    key2_match = re.search(key2_pattern, openai_response_content, re.DOTALL)
-
-    key1_value = key1_match.group(1).strip() if key1_match else None
-    key2_value = key2_match.group(1).strip() if key2_match else None
-
-    return key1_value, key2_value
 
 
 def parse_openai_response(openai_response):
