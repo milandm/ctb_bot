@@ -241,6 +241,76 @@ This is the given text that should be compressed:
 $text_to_compress
 """
 
+
+
+
+
+SYSTEM_MSG_COMPRESSION_CHECK_V1 = """
+You are expert for clinical trial research and you should check if given response is correct.
+"""
+
+
+COMPRESSION_CHECK_EXTRACT_KEY = "NEW_RESPONSE:"
+
+
+COMPRESSION_CHECK_TEMPLATE_V1 = """
+
+GIVEN_REQUEST:
+
+    ```
+    Compress the given text following rules specified below sorted by priority:
+        1. It is mandatory to keep all enlisted items!!!
+        2. Highest priority is to preserve all key information and entities in the text.
+        3. Very high priority is to compress the following text in a way that you (GPT-4) 
+        can reconstruct the intention of the human who wrote text as close as possible to the original intention. 
+        4. Compress text size to as much as possible low count of characters
+    
+        5. This is for yourself. 
+        It does not need to be human readable or understandable. 
+        Abuse of language mixing, abbreviations, symbols (unicode and emoji), 
+        or any other encodings or internal representations is all permissible, 
+        as long as it, if pasted in a new inference cycle, 
+        will yield near-identical results as the original text. 
+    
+        This is the given text that should be compressed: 
+        $text_to_compress
+    
+    ```
+
+PREVIOUS_RESPONSE: $previous_response
+    
+    Please check if PREVIOUS_RESPONSE for GIVEN_REQUEST is complete and correct.
+    If PREVIOUS_RESPONSE is complete and correct, its MANDATORY!!! that new response should be just "YES".
+    If PREVIOUS_RESPONSE is not complete or not correct, please provide as short as possible comment on PREVIOUS_RESPONSE,
+    and complete and correct new response.
+    
+    Your new response should be formatted this way:
+
+```
+COMMENT: <comment>
+NEW_RESPONSE: <new response>
+```
+    
+"""
+
+
+
+# For this specific domain CRI chatGPT cant do reconstruction of high extent of comression in proper way.
+# Domain fine-tuning is needed
+BETTER_COMPRESSION_TEMPLATE = """
+
+The PREVIOUS_RESPONSE is readable, well-formatted, and maintains the essence of the GIVEN_REQUEST. However, the goal was to compress it further using any permissible encodings or representations that I can later reconstruct for a new inference cycle.
+
+Given this, I will compress the text even further.
+
+
+
+NEW_RESPONSE: UZpkQI📋. OpšKI:👤sponz,🔀CRO,📖stud,🔢protokol,📊faza,💊lek,🏢ZU&👥istraž. TokKI:📅kvart,👥iskr&rndm,🚫ispitKI,🔒bez(🚫🏥RS&🔗IMP). 18.07.17.
+"""
+
+
+
+
 class PromptTemplateCreator:
 
 
@@ -310,4 +380,10 @@ class PromptTemplateCreator:
 
     def get_text_compression_prompt(self, document_split: str) -> str:
         user_prompt = self.prepare_template(COMPRESSION_TEMPLATE_V2, text_to_compress=document_split)
+        return user_prompt
+
+    def get_text_compression_check_prompt(self, document_split: str, previous_response: str) -> str:
+        user_prompt = self.prepare_template(COMPRESSION_CHECK_TEMPLATE_V1,
+                                            text_to_compress=document_split,
+                                            previous_response = previous_response)
         return user_prompt

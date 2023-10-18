@@ -17,12 +17,6 @@ SENTENCE_MIN_LENGTH = 2
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
 from text_bot.views.models import DocumentSplit
-from text_bot.nlp_model.prompt_template_creator import \
-    PromptTemplateCreator, \
-    SYSTEM_MSG_TITLE, \
-    TITLE_EXTRACT_KEY, \
-    SYSTEM_MSG_COMPRESSION_V2, \
-    COMPRESSION_EXTRACT_KEY
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 
@@ -45,7 +39,7 @@ class VectorizeDocumentsEngine:
 
             for documents_split in documents_splits:
 
-                text_split_compression = self.prompt_creator.get_text_compression(documents_split.page_content)
+                text_split_compression = self.get_text_compression(documents_split.page_content)
                 filename = documents_split.metadata.get("source","")
                 # page = documents_split.metadata["page"]page
                 page = documents_split.metadata.get("page",0)
@@ -67,5 +61,11 @@ class VectorizeDocumentsEngine:
                         page = page,
                         text_compression = text_split_compression)
 
+    def get_text_compression(self, documents_split_txt):
+        text_split_compression = self.prompt_creator.get_text_compression(documents_split_txt)
+        text_split_compression_check = self.prompt_creator.get_text_compression_check(documents_split_txt, text_split_compression)
 
-
+        if text_split_compression_check and "YES" in text_split_compression_check:
+            return text_split_compression
+        else:
+            return text_split_compression_check

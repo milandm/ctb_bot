@@ -71,10 +71,23 @@ def remove_quotes(s):
         return s[1:-1]
     return s
 
-def extract_value_openai_content(extract_key: str, openai_response_content: str):
+def extract_single_value_openai_content(openai_response_content: str, extract_key: str):
     # Define a pattern and find match
     value = openai_response_content.replace(extract_key,"")
     return value
+
+
+def extract_values_openai_content(openai_response_content: str, extract_key1="COMMENT", extract_key2="NEW_RESPONSE"):
+    key1_pattern = rf'{extract_key1}: (.*?)\s*(?={extract_key2}:|$)'
+    key2_pattern = rf'{extract_key2}: (.*)'
+
+    key1_match = re.search(key1_pattern, openai_response_content, re.DOTALL)
+    key2_match = re.search(key2_pattern, openai_response_content, re.DOTALL)
+
+    key1_value = key1_match.group(1).strip() if key1_match else None
+    key2_value = key2_match.group(1).strip() if key2_match else None
+
+    return key1_value, key2_value
 
 
 def parse_openai_response(openai_response):
