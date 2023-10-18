@@ -76,15 +76,6 @@ def extract_single_value_openai_content(openai_response_content: str, extract_ke
     return value
 
 
-def extract_values_openai_content(openai_response_content: str, extract_key1="COMMENT", extract_key2="NEW_RESPONSE"):
-    extract_list1 = openai_response_content.split(extract_key1)
-    if len(extract_list1) > 1:
-        extract_value1 = openai_response_content.split(extract_key1)[1].split(extract_key2)[0]
-    extract_value2 = openai_response_content.split(extract_key2)
-    return extract_value1, extract_value2
-
-
-
 def parse_openai_response(openai_response):
     openai_response = json.loads(openai_response)
     openai_response.get("choices")[0].get("message").get("content")
