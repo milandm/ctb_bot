@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from text_bot.nlp_model.config import DATA
 from text_bot.nlp_model.nlp_model import NlpModel
-from text_bot.utils import load_documents, extract_value_openai_content
+from text_bot.utils import load_documents
 
 # SENTENCE_MIN_LENGTH = 15
 SENTENCE_MIN_LENGTH = 2
