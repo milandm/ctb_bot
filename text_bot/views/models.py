@@ -59,7 +59,7 @@ class CTDocumentPage(models.Model):
         ordering = ['-id']
 
     ct_document = models.ForeignKey(CTDocument, on_delete=models.CASCADE, related_name='document_pages')
-    document_page_text = models.CharField(max_length=25000)
+    document_page_text = models.CharField(max_length=6000)
     document_page = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
