@@ -51,7 +51,7 @@ class UserHistoryManager(models.Manager):
         return self.filter(creator=user_id)
 
 
-class DocumentSplitManager(models.Manager):
+class CTDocumentSplitManager(models.Manager):
 
     # def add_document_embedding_db(self, document_title, document_text, document_embedding):
     #     self.create(document_title = document_title,

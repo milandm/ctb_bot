@@ -12,7 +12,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 # from langchain.text_splitter import MarkdownHeaderTextSplitter
 # "/content/drive/My Drive/kodi_bot"
-from text_bot.views.models import DocumentSplit
+from text_bot.views.models import CTDocumentSplit
 
 
 import sys
