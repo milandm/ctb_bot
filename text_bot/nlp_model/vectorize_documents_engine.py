@@ -98,24 +98,27 @@ class VectorizeDocumentsEngine:
                     document_page=i)
 
     def add_document_splits(self, ct_document, documents_splits):
-        for documents_split in documents_splits:
-            document_page = documents_split.metadata.get("page", 0)
-            split_text = documents_split.page_content
-            split_text_compression = self.get_text_compression(documents_split.page_content)
+        old_document_splits = ct_document.document_splits.all()
+        if len(old_document_splits) < len(documents_splits):
+            ct_document.documents_splits.all().delete()
+            for documents_split in documents_splits:
+                document_page = documents_split.metadata.get("page", 0)
+                split_text = documents_split.page_content
+                split_text_compression = self.get_text_compression(documents_split.page_content)
 
-            print("Document title: ", ct_document.document_title)
-            print("Document filename: ", ct_document.document_filename)
-            print("Document page: ", document_page)
-            print("Split text: ", split_text)
-            print("Split text compression: ", split_text_compression)
+                print("Document title: ", ct_document.document_title)
+                print("Document filename: ", ct_document.document_filename)
+                print("Document page: ", document_page)
+                print("Split text: ", split_text)
+                print("Split text compression: ", split_text_compression)
 
-            embedding = self.model.get_embedding(split_text)
+                embedding = self.model.get_embedding(split_text)
 
-            CTDocumentSplit.objects.create(
-                ct_document=ct_document,
-                document_title=ct_document.document_title,
-                document_filename=ct_document.document_filename,
-                document_page=document_page,
-                split_text=split_text,
-                split_text_compression=split_text_compression,
-                embedding=embedding)
+                CTDocumentSplit.objects.create(
+                    ct_document=ct_document,
+                    document_title=ct_document.document_title,
+                    document_filename=ct_document.document_filename,
+                    document_page=document_page,
+                    split_text=split_text,
+                    split_text_compression=split_text_compression,
+                    embedding=embedding)
