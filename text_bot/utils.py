@@ -200,3 +200,23 @@ def load_documents(documents_folder_path):
             print(e)
     return documents
 
+
+def get_related_objects(instance):
+    related_objects = {}
+
+    # Loop through all fields of the instance's model
+    for field in instance._meta.get_fields():
+
+        # If the field is a reverse relation from another model
+        if (field.one_to_many or field.one_to_one) and field.auto_created and not field.concrete:
+            # Use `getattr` to fetch the related object(s)
+            related_name = field.get_accessor_name()
+            related_obj = getattr(instance, related_name)
+
+            # If it's a OneToOneField or ForeignKey, it won't have 'all()' method
+            if field.one_to_many:
+                related_objects[related_name] = related_obj.all()
+            else:
+                related_objects[related_name] = related_obj
+
+    return related_objects
