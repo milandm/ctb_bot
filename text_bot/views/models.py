@@ -60,7 +60,7 @@ class CTDocumentPage(models.Model):
 
     ct_document = models.ForeignKey(CTDocument, on_delete=models.CASCADE, related_name='document_pages')
     document_page_text = models.CharField(max_length=6000)
-    document_page = models.IntegerField()
+    document_page_number = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -82,6 +82,7 @@ class CTDocumentSplit(models.Model):
     document_page = models.IntegerField()
     split_text = models.CharField(max_length=1500)
     split_text_compression = models.CharField(max_length=1500)
+    split_number = models.IntegerField()
     embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
     created_at = models.DateTimeField(auto_now_add=True)
 

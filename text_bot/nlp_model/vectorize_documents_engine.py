@@ -66,7 +66,13 @@ class VectorizeDocumentsEngine:
 
     def get_document(self, documents_splits):
         document_filename = documents_splits[0].metadata.get("source", "")
-        ct_document = CTDocument.objects.filter(document_filename=document_filename)
+
+        ct_document = None
+        try:
+            ct_document = CTDocument.objects.get(document_filename=document_filename)
+        except CTDocument.DoesNotExist as e:
+            print(e)
+
         if not ct_document:
             ct_document = self.create_new_document(documents_splits)
         return ct_document
@@ -95,13 +101,13 @@ class VectorizeDocumentsEngine:
                 CTDocumentPage.objects.create(
                     ct_document=ct_document,
                     document_page_text=document_page.page_content,
-                    document_page=i)
+                    document_page_number=i)
 
     def add_document_splits(self, ct_document, documents_splits):
         old_document_splits = ct_document.document_splits.all()
         if len(old_document_splits) < len(documents_splits):
-            ct_document.documents_splits.all().delete()
-            for documents_split in documents_splits:
+            ct_document.document_splits.all().delete()
+            for i, documents_split in enumerate(documents_splits):
                 document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
                 split_text_compression = self.get_text_compression(documents_split.page_content)
@@ -121,4 +127,5 @@ class VectorizeDocumentsEngine:
                     document_page=document_page,
                     split_text=split_text,
                     split_text_compression=split_text_compression,
+                    split_number=i,
                     embedding=embedding)
