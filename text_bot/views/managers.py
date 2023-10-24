@@ -64,3 +64,4 @@ class CTDocumentSplitManager(models.Manager):
     def query_embedding_and_filter_out_in_db(self, document_title, embedding):
         items = self.filter(document_title=document_title).order_by(L2Distance('embedding', embedding))[:5]
         return items
+

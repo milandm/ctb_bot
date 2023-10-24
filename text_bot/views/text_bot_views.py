@@ -19,6 +19,8 @@ from .serializers import ChatQuestionSerializer
 from .models import UserHistory
 from django.shortcuts import render, get_object_or_404, redirect
 from text_bot.views.models import ChatQuestion
+from text_bot.nlp_model.chat_manager import ChatManager
+from text_bot.nlp_model.openai_model import OpenaiModel
 
 class TopChatsView(GenericViewSet):
 
@@ -63,33 +65,20 @@ class PublicTextBotAPIView(GenericViewSet):
     def get_chat_response(self, request: Request):
         print(request.META)
 
+        chat_manager = ChatManager(OpenaiModel())
+
         input = request.query_params.get('input', '')
         history_key = request.query_params.get('history_key', '')
 
-        base64_string = get_base64_string(REACT_APP_TAX3PO_API_KEY)
+        response = chat_manager.send_user_query(input, history_key)
 
-        headers = {'Authorization': "Basic " + base64_string,
-                   'Content-Type': 'application/x-www-form-urlencoded'}
-
-        data = {'input': input, 'history_key': history_key}
-
-        response = requests.post(REACT_APP_TAX3PO_API_DEV_URL+TAX3PO_API_ENDPOINT_CONVERSATION, headers=headers, data=data)
-        # You may want to check that the request was successful
-        if response.status_code == 200:
-            data = response.json()  # parse JSON response into a Python dictionary
-
-            new_history_key = data['history_key']
-
-            buffer = data['buffer']
-            buffer = extract_human_ai_conversation_from_string(buffer)
-            data['buffer'] = buffer
-
-            ChatQuestion.objects.add_chat_question_to_top_chat_pool(input, new_history_key)
-
-            return Response(data)  # return the data in the DRF Response
+        if response:
+            return Response(response)  # return the data in the DRF Response
         else:
             print("Your request failed")
-            return Response({}, status=response.status_code)
+            return Response(response.json(), status=response.status_code)
+
+
 
 class TextBotAPIView(GenericViewSet):
 

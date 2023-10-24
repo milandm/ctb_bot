@@ -14,7 +14,6 @@ from typing import List
 from sentence_transformers import SentenceTransformer, util
 
 
-
 def get_distance_scores(embeddings1, embeddings2):
     cosine_scores = 1 - (paired_cosine_distances([embeddings1], [embeddings2]))
     manhattan_distances = paired_manhattan_distances([embeddings1], [embeddings2])

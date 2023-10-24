@@ -15,7 +15,9 @@ SYSTEM_MSG = 'Ti si ekspert za zakone u oblasti klinickih istrazivanja.'
 EMBEDDING_MODEL = "text-embedding-ada-002"
 # LLM_MODEL = "gpt-3.5-turbo"
 LLM_MODEL = "gpt-4"
-
+MAX_TOKENS = 8192
+# MAX_TOKENS = 4096
+# MAX_TOKENS = 1024
 
 class OpenaiModel(NlpModel):
 
@@ -32,7 +34,7 @@ class OpenaiModel(NlpModel):
             model=LLM_MODEL,
             messages=[{"role": "system", "content": system_msg},
                        {"role": "user", "content": user_prompt}],
-            max_tokens = 1024,
+            max_tokens = MAX_TOKENS,
             temperature=0,
             top_p=1,
             frequency_penalty=0,
