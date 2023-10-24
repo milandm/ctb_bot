@@ -19,6 +19,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHead
 from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
+from text_bot.ai_utils import get_mmr_cosine_sorted_docs
 
 MAX_CHUNK_SIZE = 1000
 MAX_CHUNK_OVERLAP_SIZE = 500
@@ -34,9 +35,8 @@ class ChatManager:
         # get_chat_history = self.get_chat_history(history_key)
         query_embedding = self.model.get_embedding(current_query)
         documents = CTDocumentSplit.objects.query_embedding_in_db(query_embedding)
-        self.prompt_creator.get_answer(query_embedding, documents)
-
-
+        doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
+        self.prompt_creator.get_answer(query_embedding, doc_for_prompt)
 
 
     def get_chat_history(self, history_key: str) -> dict:

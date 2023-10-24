@@ -12,6 +12,42 @@ from scipy.stats import pearsonr, spearmanr
 import numpy as np
 from typing import List
 from sentence_transformers import SentenceTransformer, util
+from collections import OrderedDict
+from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
+
+def get_mmr_cosine_sorted_docs(query_embedding, docs: List[CTDocumentSplit]):
+    lambda_parameter = 0.5
+    similarity1 = util.pytorch_cos_sim
+    similarity2 = util.pytorch_cos_sim
+    return mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2)
+
+def mmr_sorted(query_embedding, docs: List[CTDocumentSplit], lambda_parameter, similarity1, similarity2):
+    """Sort a list of docs by Maximal marginal relevance
+
+	Performs maximal marginal relevance sorting on a set of
+	documents as described by Carbonell and Goldstein (1998)
+	in their paper "The Use of MMR, Diversity-Based Reranking
+	for Reordering Documents and Producing Summaries"
+
+    :param docs: a set of documents to be ranked
+				  by maximal marginal relevance
+    :param q: query to which the documents are results
+    :param lambda_: lambda parameter, a float between 0 and 1
+    :param similarity1: sim_1 function. takes a doc and the query
+						as an argument and computes their similarity
+    :param similarity2: sim_2 function. takes two docs as arguments
+						and computes their similarity score
+    :return: a (document, mmr score) ordered dictionary of the docs
+			given in the first argument, ordered my MMR
+    """
+    selected = OrderedDict()
+    while set(selected) != docs:
+        remaining = docs - set(selected)
+        mmr_score = lambda x: lambda_parameter * similarity1(x.embedding, query_embedding) - (1 - lambda_parameter) * max(
+            [similarity2(x.embedding, y.embedding) for y in set(selected) - {x}] or [0])
+        next_selected = max(remaining, key=mmr_score)
+        selected[next_selected] = len(selected)
+    return selected
 
 
 def get_distance_scores(embeddings1, embeddings2):
