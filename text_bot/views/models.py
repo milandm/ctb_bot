@@ -1,6 +1,6 @@
 from django.db import models
 from pgvector.django import VectorField
-from pgvector.django import IvfflatIndex
+from pgvector.django import IvfflatIndex, HnswIndex
 from text_bot.views.managers import TopChatQuestionsManager, CTDocumentSplitManager
 
 
@@ -72,7 +72,17 @@ class CTDocumentSplit(models.Model):
                 name='my_index',
                 fields=['embedding'],
                 lists=100,
+                # probes = 10,
                 opclasses=['vector_cosine_ops']
+            ),
+
+            # or
+            HnswIndex(
+                name='my_hnsw_index',
+                fields=['embedding'],
+                m=16,
+                ef_construction=64,
+                opclasses=['vector_l2_ops']
             )
         ]
 

@@ -8,7 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Your code to create mock data here
         chat_manager = ChatManager(OpenaiModel())
-        current_query = "Kako se zove ekspert za zakone u oblasti klinickih istrazivanja?"
+        current_query = "Koji su koraci neophodni da bi se izvrsilo klinicko istrazivanje u Srbiji?"
         chat_manager.send_user_query(current_query)
         self.stdout.write(self.style.SUCCESS('Successfully created mock data'))
 

@@ -35,7 +35,7 @@ class ChatManager:
         print("current_query "+current_query)
         # get_chat_history = self.get_chat_history(history_key)
         query_embedding = self.model.get_embedding(current_query)
-        documents = CTDocumentSplit.objects.query_embedding_in_db(query_embedding)
+        documents = CTDocumentSplit.objects.query_embedding_by_distance(query_embedding)
         documents_list = list(documents)
         doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
 
