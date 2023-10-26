@@ -1,6 +1,6 @@
 from django.db import models
 from sentence_transformers import SentenceTransformer
-from pgvector.django import L2Distance
+from pgvector.django import CosineDistance
 from text_bot.ai_utils import get_distance_scores, check_distance_scores_out
 
 class TopChatQuestionsManager(models.Manager):
@@ -59,9 +59,9 @@ class CTDocumentSplitManager(models.Manager):
     #                 embedding=document_embedding)
 
     def query_embedding_in_db(self, embedding):
-        return self.order_by(L2Distance('embedding', embedding))[:5]
+        return self.order_by(CosineDistance('embedding', embedding)).all()[:5]
 
     def query_embedding_and_filter_out_in_db(self, document_title, embedding):
-        items = self.filter(document_title=document_title).order_by(L2Distance('embedding', embedding))[:5]
+        items = self.filter(document_title=document_title).order_by(CosineDistance('embedding', embedding))[:5]
         return items
 

@@ -72,7 +72,7 @@ class CTDocumentSplit(models.Model):
                 name='my_index',
                 fields=['embedding'],
                 lists=100,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 

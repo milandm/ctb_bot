@@ -13,15 +13,14 @@ import numpy as np
 from typing import List
 from sentence_transformers import SentenceTransformer, util
 from collections import OrderedDict
-from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
 
-def get_mmr_cosine_sorted_docs(query_embedding, docs: List[CTDocumentSplit]):
+def get_mmr_cosine_sorted_docs(query_embedding, docs):
     lambda_parameter = 0.5
     similarity1 = util.pytorch_cos_sim
     similarity2 = util.pytorch_cos_sim
     return mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2)
 
-def mmr_sorted(query_embedding, docs: List[CTDocumentSplit], lambda_parameter, similarity1, similarity2):
+def mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2):
     """Sort a list of docs by Maximal marginal relevance
 
 	Performs maximal marginal relevance sorting on a set of
@@ -41,6 +40,7 @@ def mmr_sorted(query_embedding, docs: List[CTDocumentSplit], lambda_parameter, s
 			given in the first argument, ordered my MMR
     """
     selected = OrderedDict()
+    docs = set(docs)
     while set(selected) != docs:
         remaining = docs - set(selected)
         mmr_score = lambda x: lambda_parameter * similarity1(x.embedding, query_embedding) - (1 - lambda_parameter) * max(

@@ -31,12 +31,22 @@ class ChatManager:
         self.model = nlp_model
         self.prompt_creator = PromptCreator(nlp_model)
 
-    def send_user_query(self, current_query: str, history_key: str) -> dict:
+    def send_user_query(self, current_query: str, history_key:str = "") -> dict:
+        print("current_query "+current_query)
         # get_chat_history = self.get_chat_history(history_key)
         query_embedding = self.model.get_embedding(current_query)
         documents = CTDocumentSplit.objects.query_embedding_in_db(query_embedding)
+        documents_list = list(documents)
         doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
-        self.prompt_creator.get_answer(query_embedding, doc_for_prompt)
+
+        print("not ranked ")
+        for doc in documents:
+            print(doc.split_text)
+
+        print("ranked ")
+        for doc in doc_for_prompt:
+            print(doc.split_text)
+        # self.prompt_creator.get_answer(query_embedding, doc_for_prompt)
 
 
     def get_chat_history(self, history_key: str) -> dict:
