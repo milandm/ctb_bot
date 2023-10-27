@@ -66,4 +66,4 @@ class CTDocumentSplitManager(models.Manager):
         return items
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('embedding', embedding)).filter(distance__lt=5)
+        return self.alias(distance=CosineDistance('embedding', embedding)).filter(distance__lt=0.15).order_by('distance')
