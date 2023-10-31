@@ -19,9 +19,9 @@ from text_bot.nlp_model.prompt_template_creator import \
     PromptTemplateCreator, \
     SYSTEM_MSG_TITLE, \
     TITLE_EXTRACT_KEY, \
-    SYSTEM_MSG_COMPRESSION_V3, \
-    COMPRESSION_EXTRACT_KEY, \
-    SYSTEM_MSG_COMPRESSION_CHECK_V1
+    DOCUMENT_SYSTEM_MSG_COMPRESSION_V3, \
+    DOCUMENT_COMPRESSION_EXTRACT_KEY, \
+    DOCUMENT_SYSTEM_MSG_COMPRESSION_CHECK_V1
 
 
 class PromptCreator:
@@ -38,13 +38,22 @@ class PromptCreator:
         document_title = extract_single_value_openai_content(document_title_content, TITLE_EXTRACT_KEY)
         return document_title
 
-    def get_text_compression(self, documents_split_txt: str):
-        documents_split_txt = self.clean_documents_split(documents_split_txt)
-        text_compression_prompt = self.prompt_template_creator.get_text_compression_prompt(documents_split_txt)
-        text_compression_openai_response = self.model.send_prompt(SYSTEM_MSG_COMPRESSION_V3, text_compression_prompt)
+    def get_query_based_text_compression(self, query, documents_split_txt: str):
+        text_compression_prompt = self.prompt_template_creator.get_document_text_compression_prompt(documents_split_txt)
+        text_compression_openai_response = self.model.send_prompt(DOCUMENT_SYSTEM_MSG_COMPRESSION_V3, text_compression_prompt)
         print(str(text_compression_openai_response))
         text_compression_content = text_compression_openai_response.get("choices")[0].get("message").get("content")
-        text_compression = extract_single_value_openai_content(text_compression_content, COMPRESSION_EXTRACT_KEY)
+        text_compression = extract_single_value_openai_content(text_compression_content, DOCUMENT_COMPRESSION_EXTRACT_KEY)
+        text_compression = remove_quotes(text_compression)
+        return text_compression
+
+    def get_document_text_compression(self, documents_split_txt: str):
+        documents_split_txt = self.clean_documents_split(documents_split_txt)
+        text_compression_prompt = self.prompt_template_creator.get_document_text_compression_prompt(documents_split_txt)
+        text_compression_openai_response = self.model.send_prompt(DOCUMENT_SYSTEM_MSG_COMPRESSION_V3, text_compression_prompt)
+        print(str(text_compression_openai_response))
+        text_compression_content = text_compression_openai_response.get("choices")[0].get("message").get("content")
+        text_compression = extract_single_value_openai_content(text_compression_content, DOCUMENT_COMPRESSION_EXTRACT_KEY)
         text_compression = remove_quotes(text_compression)
         return text_compression
 
@@ -56,10 +65,10 @@ class PromptCreator:
         response_content_txt = response_content.replace("```", "")
         return response_content_txt
 
-    def get_text_compression_check(self, documents_split_txt: str, previous_response: str):
+    def get_document_text_compression_check(self, documents_split_txt: str, previous_response: str):
         documents_split_txt = self.clean_documents_split(documents_split_txt)
-        text_compression_check_prompt = self.prompt_template_creator.get_text_compression_check_prompt(documents_split_txt, previous_response)
-        text_compression_check_openai_response = self.model.send_prompt(SYSTEM_MSG_COMPRESSION_CHECK_V1, text_compression_check_prompt)
+        text_compression_check_prompt = self.prompt_template_creator.get_document_text_compression_check_prompt(documents_split_txt, previous_response)
+        text_compression_check_openai_response = self.model.send_prompt(DOCUMENT_SYSTEM_MSG_COMPRESSION_CHECK_V1, text_compression_check_prompt)
         print(str(text_compression_check_openai_response))
         text_compression_check_content = text_compression_check_openai_response.get("choices")[0].get("message").get("content")
 

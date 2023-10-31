@@ -161,7 +161,7 @@ Izdvoj naslov iz DOCUMENT_SPLIT teksta
 
 
 
-SYSTEM_MSG_COMPRESSION_V1 = """
+DOCUMENT_SYSTEM_MSG_COMPRESSION_V1 = """
 Compress the following text in a way that fits in a tweet - 280 characters (ideally)
 and such that you (GPT-4) can reconstruct the intention of the human 
 who wrote text as close as possible to the original intention. 
@@ -179,7 +179,7 @@ TEXT_COMPRESSION: <text you compressed>
 """
 
 
-SYSTEM_MSG_COMPRESSION_V2 = """
+DOCUMENT_SYSTEM_MSG_COMPRESSION_V2 = """
 Compress the given text following rules specified below sorted by priority:
     1. Mandatory keep all enlisted items!!!
     2. Highest priority is to preserve all key information and entities in the text.
@@ -205,7 +205,7 @@ TEXT_COMPRESSION: <text you compressed>
 """
 
 
-SYSTEM_MSG_COMPRESSION_V2 = """
+DOCUMENT_SYSTEM_MSG_COMPRESSION_V2 = """
 Compress the given text following rules specified below sorted by priority:
     1. It is mandatory to keep all enlisted items!!!
     2. Highest priority is to preserve all key information and entities in the text.
@@ -228,7 +228,7 @@ TEXT_COMPRESSION: <text you compressed>
 """
 
 
-SYSTEM_MSG_COMPRESSION_V3 = """
+DOCUMENT_SYSTEM_MSG_COMPRESSION_V3 = """
 Compress the given text following rules specified below sorted by priority:
     1. It is mandatory to keep all enlisted items!!!
     2. Highest priority is to preserve all key information and entities in the text.
@@ -251,15 +251,15 @@ TEXT_COMPRESSION: <text you compressed>
 """
 
 
-COMPRESSION_EXTRACT_KEY = "TEXT_COMPRESSION:"
+DOCUMENT_COMPRESSION_EXTRACT_KEY = "TEXT_COMPRESSION:"
 
 
-COMPRESSION_TEMPLATE_V1 = """
+DOCUMENT_COMPRESSION_TEMPLATE_V1 = """
 This is text that should be compressed: 
 $text_to_compress
 """
 
-COMPRESSION_TEMPLATE_V2 = """
+DOCUMENT_COMPRESSION_TEMPLATE_V2 = """
 This is the given text that should be compressed: 
 $text_to_compress
 """
@@ -268,11 +268,11 @@ $text_to_compress
 
 
 
-SYSTEM_MSG_COMPRESSION_CHECK_V1 = """
+DOCUMENT_SYSTEM_MSG_COMPRESSION_CHECK_V1 = """
 You are expert for clinical trial research and you should check if given response is correct.
 """
 
-COMPRESSION_CHECK_TEMPLATE_V1 = """
+DOCUMENT_COMPRESSION_CHECK_TEMPLATE_V1 = """
 
 GIVEN_REQUEST:
 
@@ -331,6 +331,146 @@ NEW_RESPONSE: UZpkQI📋. OpšKI:👤sponz,🔀CRO,📖stud,🔢protokol,📊faz
 
 
 
+
+# Rewrite-Retrieve-Read
+
+
+template = """Answer the users question based only on the following context:
+
+<context>
+{context}
+</context>
+
+Question: {question}
+"""
+
+
+
+template = """Provide a better search query for \
+web search engine to answer the given question, end \
+the queries with ’**’. Question: \
+{x} Answer:"""
+
+
+
+
+
+# Semi-structured RAG
+#
+# Many documents contain a mixture of content types, including text and tables.
+
+
+template = """Provide a better search query for \
+web search engine to answer the given question, end \
+the queries with ’**’. Question: \
+{x} Answer:"""
+
+
+# table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
+
+
+# RAG Fusion
+#
+# vectorstore = Pinecone.from_existing_index("rag-fusion", OpenAIEmbeddings())
+# retriever = vectorstore.as_retriever()
+#
+# from langchain.load import dumps, loads
+#
+#
+# def reciprocal_rank_fusion(results: list[list], k=60):
+#     fused_scores = {}
+#     for docs in results:
+#         # Assumes the docs are returned in sorted order of relevance
+#         for rank, doc in enumerate(docs):
+#             doc_str = dumps(doc)
+#             if doc_str not in fused_scores:
+#                 fused_scores[doc_str] = 0
+#             previous_score = fused_scores[doc_str]
+#             fused_scores[doc_str] += 1 / (rank + k)
+#
+#     reranked_results = [(loads(doc), score) for doc, score in
+#                         sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)]
+#     return reranked_results
+
+
+
+
+# Rules Based Checker
+# from langchain_experimental.tot.checker import ToTChecker
+# from langchain_experimental.tot.thought import ThoughtValidity
+
+# Step-Back Prompting (Question-Answering)
+
+response_prompt_template = """You are an expert of world knowledge. I am going to ask you a question. Your response should be comprehensive and not contradicted with the following context if they are relevant. Otherwise, ignore them if they are not relevant.
+
+{normal_context}
+
+Original Question: {question}
+Answer:"""
+
+from langchain.chains.qa_with_sources.refine_prompts import DEFAULT_REFINE_PROMPT_TMPL
+
+
+# # Few Shot Examples
+# examples = [
+#     {
+#         "input": "Could the members of The Police perform lawful arrests?",
+#         "output": "what can the members of The Police do?"
+#     },
+#     {
+#         "input": "Jan Sindel’s was born in what country?",
+#         "output": "what is Jan Sindel’s personal history?"
+#     },
+# ]
+# # We now transform these to example messages
+# example_prompt = ChatPromptTemplate.from_messages(
+#     [
+#         ("human", "{input}"),
+#         ("ai", "{output}"),
+#     ]
+# )
+# few_shot_prompt = FewShotChatMessagePromptTemplate(
+#     example_prompt=example_prompt,
+#     examples=examples,
+# )
+
+# Hypothetical Document Embeddings (HyDE)
+
+prompt_template = """Please answer the user's question about the most recent state of the union address
+Question: {question}
+Answer:"""
+
+
+# Learned Prompt Variable Injection via RL
+
+
+# Summarization checker chain
+
+# EmbeddingsRedundantFilter
+
+
+# k: Optional[int] = 20
+# """The number of relevant documents to return. Can be set to None, in which case
+# `similarity_threshold` must be specified. Defaults to 20."""
+# similarity_threshold: Optional[float]
+# """Threshold for determining when two documents are similar enough
+# to be considered redundant. Defaults to None, must be specified if `k` is set
+# to None."""
+
+
+# similarity_fn: Callable = cosine_similarity
+# """Similarity function for comparing documents. Function expected to take as input
+# two matrices (List[List[float]]) and return a matrix of scores where higher values
+# indicate greater similarity."""
+# similarity_threshold: float = 0.95
+# """Threshold for determining when two documents are similar enough
+# to be considered redundant."""
+
+
+# Counter Hypothetical Document Embeddings (HyDE)
+# CREATE QUESTIONS FOR CONTEXT
+
+# langchain_experimental.smart_llm import SmartLLMChain
 
 class PromptTemplateCreator:
 
@@ -398,13 +538,16 @@ class PromptTemplateCreator:
         user_prompt = self.prepare_template(TITLE_TEMPLATE, document_split=document_split)
         return user_prompt
 
-
-    def get_text_compression_prompt(self, document_split: str) -> str:
-        user_prompt = self.prepare_template(COMPRESSION_TEMPLATE_V2, text_to_compress=document_split)
+    def get_query_based_text_compression_prompt(self, query: str, document_split: str) -> str:
+        user_prompt = self.prepare_template(QUERY_BASED_COMPRESSION_TEMPLATE_V2, query = query, text_to_compress=document_split)
         return user_prompt
 
-    def get_text_compression_check_prompt(self, document_split: str, previous_response: str) -> str:
-        user_prompt = self.prepare_template(COMPRESSION_CHECK_TEMPLATE_V1,
+    def get_document_text_compression_prompt(self, document_split: str) -> str:
+        user_prompt = self.prepare_template(DOCUMENT_COMPRESSION_TEMPLATE_V2, text_to_compress=document_split)
+        return user_prompt
+
+    def get_document_text_compression_check_prompt(self, document_split: str, previous_response: str) -> str:
+        user_prompt = self.prepare_template(DOCUMENT_COMPRESSION_CHECK_TEMPLATE_V1,
                                             text_to_compress=document_split,
                                             previous_response = previous_response)
         return user_prompt

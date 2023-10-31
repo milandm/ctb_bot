@@ -51,7 +51,12 @@ class UserHistoryManager(models.Manager):
         return self.filter(creator=user_id)
 
 
+# COSINE_DISTANCE_TRESHOLD = 0.15
+COSINE_DISTANCE_TRESHOLD = 0.2
+
 class CTDocumentSplitManager(models.Manager):
+
+
 
     # def add_document_embedding_db(self, document_title, document_text, document_embedding):
     #     self.create(document_title = document_title,
@@ -66,4 +71,4 @@ class CTDocumentSplitManager(models.Manager):
         return items
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('embedding', embedding)).filter(distance__lt=0.15).order_by('distance')
+        return self.alias(distance=CosineDistance('embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')

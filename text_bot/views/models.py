@@ -64,6 +64,10 @@ class CTDocumentPage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+
+# extract topics, extract keywords, extract possible questions
+# Counter Hypothetical Document Embeddings (HyDE)
+# CREATE QUESTIONS FOR CONTEXT
 class CTDocumentSplit(models.Model):
     class Meta:
         ordering = ['-id']

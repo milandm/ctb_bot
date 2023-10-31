@@ -47,8 +47,8 @@ class VectorizeDocumentsEngine:
 
 
     def get_text_compression(self, documents_split_txt):
-        text_split_compression = self.prompt_creator.get_text_compression(documents_split_txt)
-        text_split_compression_check = self.prompt_creator.get_text_compression_check(documents_split_txt, text_split_compression)
+        text_split_compression = self.prompt_creator.get_document_text_compression(documents_split_txt)
+        text_split_compression_check = self.prompt_creator.get_document_text_compression_check(documents_split_txt, text_split_compression)
 
         if text_split_compression_check and "YES" in text_split_compression_check:
             return text_split_compression
