@@ -9,6 +9,9 @@ from text_bot.nlp_model.config import (
 
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
+from typing import List, Callable
+import numpy as np
+
 
 
 SYSTEM_MSG = 'Ti si ekspert za zakone u oblasti klinickih istrazivanja.'
@@ -27,6 +30,22 @@ class OpenaiModel(NlpModel):
         openai.api_key = OPENAI_API_KEY
         self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL)
         self.open_ai_embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+
+
+    # Counter Hypothetical Document Embeddings (HyDE)
+    # CREATE QUESTIONS FOR CONTEXT
+
+    # def get_embedding(self, text, model="text-embedding-ada-002"):
+    #     text = text.replace("\n", " ")
+    #     return openai.Embedding.create(input=[text], model=model)['data'][0]['embedding']
+    #
+
+    # reformulate question to sound more as description of what to search for
+    # using open ai request
+    # use langchain.chains.qa_with_sources approach
+    def get_embedding(self, text):
+        return self.open_ai_embeddings.embed_query(text)
+
 
     def send_prompt( self, system_msg:str, user_prompt:str ):
         response = openai.ChatCompletion.create(
@@ -67,17 +86,9 @@ class OpenaiModel(NlpModel):
 
         return response
 
-    # Counter Hypothetical Document Embeddings (HyDE)
-    # CREATE QUESTIONS FOR CONTEXT
-    def get_embedding(self, text):
-        return self.open_ai_embeddings.embed_query(text)
-
 
     def get_embeddings(self, sentences: list[str]) -> list[list[float]]:
         return self.open_ai_embeddings.embed_documents(sentences)
-
-
-
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Call the base embeddings."""

@@ -101,7 +101,7 @@ class CTDocumentSplit(models.Model):
 
     # main context split
     # semantically connected splits
-    
+
     ct_document = models.ForeignKey(CTDocument, on_delete=models.CASCADE, related_name='document_splits')
     document_title = models.CharField(max_length=100)
     document_filename = models.CharField(max_length=100)
