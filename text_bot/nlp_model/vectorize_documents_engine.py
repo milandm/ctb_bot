@@ -20,18 +20,24 @@ from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 
-MAX_CHUNK_SIZE = 1000
-MAX_CHUNK_OVERLAP_SIZE = 500
+MAX_CHUNK_SIZE = 500
+MAX_CHUNK_OVERLAP_SIZE = 250
 MAX_PAGE_SIZE = 5500
 
+HEADERS_TO_SPLIT_ON = [
+    ("#", "Header 1"),
+    ("##", "Header 2"),
+]
+
 class VectorizeDocumentsEngine:
+
 
     def __init__(self, nlp_model :NlpModel):
         self.model = nlp_model
         self.prompt_creator = PromptCreator(nlp_model)
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=MAX_CHUNK_SIZE, chunk_overlap=MAX_CHUNK_OVERLAP_SIZE)
         self.pages_splitter = RecursiveCharacterTextSplitter(chunk_size=MAX_PAGE_SIZE, chunk_overlap=0)
-        # self.text_splitter = MarkdownHeaderTextSplitter(chunk_size=1000, chunk_overlap=500)
+        self.markdown_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=HEADERS_TO_SPLIT_ON)
 
 
     def load_documents_to_db(self):
@@ -39,7 +45,10 @@ class VectorizeDocumentsEngine:
         for document_pages in documents:
 
             document_pages_formatted = self.get_document_split_pages(document_pages)
-            documents_splits = self.text_splitter.split_documents(document_pages_formatted)
+
+            md_header_splits = self.markdown_splitter.split_text(document_pages_formatted)
+
+            documents_splits = self.text_splitter.split_documents(md_header_splits)
 
             ct_document = self.get_document(documents_splits)
             self.add_document_pages(ct_document, document_pages_formatted)

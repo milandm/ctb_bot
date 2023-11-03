@@ -49,6 +49,8 @@ class CTDocument(models.Model):
     class Meta:
         ordering = ['-id']
 
+    # find all main topics/contexts
+    # find all splits with main context explained
     document_version = models.IntegerField()
     document_title = models.CharField(max_length=100)
     document_filename = models.CharField(max_length=100)
@@ -90,6 +92,16 @@ class CTDocumentSplit(models.Model):
             )
         ]
 
+    # find split with main context
+    # find semantically connected splits
+    # is this split related to previous split context
+    # is next split related to this slit content
+    # what is this split related to in bigger context
+    # pick up all splits related with bigger context
+
+    # main context split
+    # semantically connected splits
+    
     ct_document = models.ForeignKey(CTDocument, on_delete=models.CASCADE, related_name='document_splits')
     document_title = models.CharField(max_length=100)
     document_filename = models.CharField(max_length=100)
