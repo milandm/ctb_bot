@@ -17,7 +17,11 @@ import numpy as np
 SYSTEM_MSG = 'Ti si ekspert za zakone u oblasti klinickih istrazivanja.'
 EMBEDDING_MODEL = "text-embedding-ada-002"
 # LLM_MODEL = "gpt-3.5-turbo"
-LLM_MODEL = "gpt-4"
+# LLM_MODEL = "gpt-4"
+LLM_MODEL ="gpt-4-110= 6-preview"
+
+# MAX_CHARACTERS = MAX_TOKENS x 4
+# MAX_TOKENS = 4095
 MAX_TOKENS = 8192
 # MAX_TOKENS = 4096
 # MAX_TOKENS = 1024

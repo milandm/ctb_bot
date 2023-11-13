@@ -65,6 +65,23 @@ from langchain.document_loaders import Docx2txtLoader
 from langchain.document_loaders import TextLoader
 from pathlib import Path
 
+
+def extract_json_data(input_string):
+    # Regular expression pattern to extract JSON data
+    json_pattern = r'```json\s*\n(\[.*?\])\s*\n```'
+
+    # Search for the JSON string using the regular expression
+    match = re.search(json_pattern, input_string, re.DOTALL)
+
+    if match:
+        # Extract the JSON string
+        json_string = match.group(1)
+
+        # Parse the JSON string into a Python object
+        json_data = json.loads(json_string)
+
+
+
 def remove_quotes(s):
     if s.startswith('"') and s.endswith('"'):
         return s[1:-1]

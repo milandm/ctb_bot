@@ -472,9 +472,106 @@ Answer:"""
 
 # langchain_experimental.smart_llm import SmartLLMChain
 
-
-
 # what is this split related to? many contexts
+
+
+DOCUMENT_SYSTEM_MSG_CHUNKING_V1 = """
+You are expert for clinical trial research and you should check if given response is correct.
+"""
+
+DOCUMENT_TEXT_CHUNKING_TEMPLATE_V1 = """for this given text : 
+$text_to_chunk   
+
+
+Chunk this text in semantically connected  text units and format output as  json  list.
+Identify the main sections and subsections, 
+understanding their content, and then dividing them into coherent units that can be represented in a JSON format.
+
+For every unit please provide:
+
+Section Title: [Title of the Section]
+Section Content Summary: [Brief summary or key points of this subsection]
+Section Text:[Here provide section full original text content]
+Section References:[List of all important concepts and terms that this section refers to  taking in account whole text]
+Subsection Topics:[List of all topics and terms that this section refers to  taking in account whole text]
+
+Subsection Title: [Details of Subsection]
+Subsection Content Summary: [Brief summary or key points of this subsection]
+Subsection Text :[Here provide subsection full original text content]
+Subsection References:[List of all important concepts and terms that this subsections refers to  taking in account whole containing section text]
+Subsection References:[List of all important concepts and terms that this subsection refers to  taking in account whole containing section text]
+Subsection Topics:[List of all topics and terms that this subsection refers to  taking in account whole containing section text]
+
+
+!!!It is MANDATORY to populate all of these values!!!
+!!!It is MANDATORY to give original content!!!"""
+
+
+
+
+DOCUMENT_SYSTEM_MSG_QUESTION_PREPARATION_V1 = """
+You are expert for clinical trial research and you should check if given response is correct.
+"""
+
+QUESTION_PREPARATION_PROMPT_TEMPLATE_V1 = """
+Formulate this question as a statement:
+$question 
+"""
+
+
+THREE_QUESTION_PREPARATION_PROMPT_TEMPLATE_V1= """
+Formulate this question as a statement in three different ways, export json list:
+$question 
+"""
+
+
+
+
+
+# ```json
+# [
+#   {
+#     "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
+#     "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+#     "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+#     "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање", "упутство за лек"],
+#     "Subsection Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
+#     "Subsections": [
+#       {
+#         "Subsection Title": "Садржина правилника",
+#         "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+#         "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+#         "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање", "упутство за лек"],
+#         "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
+#       }
+#     ]
+#   },
+#   {
+#     "Section Title": "II. САДРЖАЈ И НАЧИН ОБЕЛЕЖАВАЊА СПОЉЊЕГ ПАКОВАЊА ЛЕКА",
+#     "Section Content Summary": "Details the requirements for the content and method of labeling the external packaging of medicines.",
+#     "Section Text": "II. САДРЖАЈ И НАЧИН ОБЕЛЕЖАВАЊА СПОЉЊЕГ ПАКОВАЊА ЛЕКА\nЧлан 5.\nСпољње паковање лека јесте паковање у коме се налази унутрашње паковање лека.\nЧлан 6.\nНа спољњем паковању лека, кao и на паковању код кога унутрашње паковање уједно представља и спољње паковање лека, морају да буду наведени следећи подаци: [followed by a list of required information]",
+#     "Section References": ["спољње паковање", "лек", "обележавање", "информације"],
+#     "Subsection Topics": ["Спољње паковање лека", "обележавање", "информације"],
+#     "Subsections": [
+#       {
+#         "Subsection Title": "Спољње паковање лека",
+#         "Subsection Content Summary": "Defines what is considered the external packaging of a medicine.",
+#         "Subsection Text": "Члан 5.\nСпољње паковање лека јесте паковање у коме се налази унутрашње паковање лека.",
+#         "Subsection References": ["спољње паковање", "лек"],
+#         "Subsection Topics": ["спољње паковање"]
+#       },
+#       {
+#         "Subsection Title": "Обележавање спољњег паковања лека",
+#         "Subsection Content Summary": "Lists the specific information that must be included on the external packaging of medicines.",
+#         "Subsection Text": "Члан 6.\nНа спољњем паковању лека, кao и на паковању код кога унутрашње паковање уједно представља и спољње паковање лека, морају да буду наведени следећи подаци: [followed by a list of required information]",
+#         "Subsection References": ["спољње паковање", "лек", "обележавање", "информације"],
+#         "Subsection Topics": ["обележавање", "информације"]
+#       }
+#     ]
+#   }
+# ]
+
+
 
 class PromptTemplateCreator:
 
@@ -554,4 +651,11 @@ class PromptTemplateCreator:
         user_prompt = self.prepare_template(DOCUMENT_COMPRESSION_CHECK_TEMPLATE_V1,
                                             text_to_compress=document_split,
                                             previous_response = previous_response)
+        return user_prompt
+
+
+    def get_document_text_chunks_prompt(self, text_to_chunk, last_previous_section) -> str:
+        text_to_chunk =
+        user_prompt = self.prepare_template(DOCUMENT_TEXT_CHUNKING_TEMPLATE_V1,
+                                            text_to_chunk=text_to_chunk)
         return user_prompt
