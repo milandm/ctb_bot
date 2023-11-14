@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from text_bot.nlp_model.config import DATA
 from text_bot.nlp_model.nlp_model import NlpModel
-from text_bot.utils import load_documents, remove_quotes, extract_single_value_openai_content
+from text_bot.utils import load_documents, remove_quotes, extract_single_value_openai_content, extract_json_data
 
 # SENTENCE_MIN_LENGTH = 15
 SENTENCE_MIN_LENGTH = 2
@@ -21,7 +21,8 @@ from text_bot.nlp_model.prompt_template_creator import \
     TITLE_EXTRACT_KEY, \
     DOCUMENT_SYSTEM_MSG_COMPRESSION_V3, \
     DOCUMENT_COMPRESSION_EXTRACT_KEY, \
-    DOCUMENT_SYSTEM_MSG_COMPRESSION_CHECK_V1
+    DOCUMENT_SYSTEM_MSG_COMPRESSION_CHECK_V1, \
+    DOCUMENT_SYSTEM_MSG_SEMANTIC_TEXT_CHUNKING_V1
 
 
 class PromptCreator:
@@ -81,3 +82,16 @@ class PromptCreator:
             print(e)
         text_compression_check = remove_quotes(text_compression_check)
         return text_compression_check
+
+    def get_document_semantic_text_chunks(self, documents_split_txt: str, last_previous_semantic_chunk: str):
+        documents_split_txt = self.clean_documents_split(documents_split_txt)
+        semantic_text_chunks_prompt = self.prompt_template_creator.get_document_semantic_text_chunks_prompt(
+            documents_split_txt, last_previous_semantic_chunk)
+        semantic_text_chunk_openai_response = self.model.send_prompt(DOCUMENT_SYSTEM_MSG_SEMANTIC_TEXT_CHUNKING_V1,
+                                                                      semantic_text_chunks_prompt)
+        print(str(semantic_text_chunk_openai_response))
+        semantic_text_chunks_content = semantic_text_chunk_openai_response.get("choices")[0].get("message").get(
+            "content")
+
+        semantic_text_chunks_content_json_list = extract_json_data(semantic_text_chunks_content)
+        return semantic_text_chunks_content_json_list

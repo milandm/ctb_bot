@@ -475,11 +475,11 @@ Answer:"""
 # what is this split related to? many contexts
 
 
-DOCUMENT_SYSTEM_MSG_CHUNKING_V1 = """
+DOCUMENT_SYSTEM_MSG_SEMANTIC_TEXT_CHUNKING_V1 = """
 You are expert for clinical trial research and you should check if given response is correct.
 """
 
-DOCUMENT_TEXT_CHUNKING_TEMPLATE_V1 = """for this given text : 
+DOCUMENT_SEMANTIC_TEXT_CHUNKING_TEMPLATE_V1 = """for this given text : 
 $text_to_chunk   
 
 
@@ -524,8 +524,40 @@ Formulate this question as a statement in three different ways, export json list
 $question 
 """
 
+QUERY_BASED_COMPRESSION_TEMPLATE_V1 = """
+
+We are looking for answer on this question: 
+QUESTION: $question
+in the text given bellow.
+
+This is the given text we are looking for answer on given question: 
+TEXT: $text_to_compress
+
+Pick up all information form given TEXT related to given QUESTION 
+and compress related information following rules specified below sorted by priority:
+    1. It is mandatory to keep all enlisted items!!!
+    2. Highest priority is to preserve all key information and entities in the text.
+    3. Very high priority is to compress the following text in a way that you (GPT-4) 
+    can reconstruct the intention of the human who wrote text as close as possible to the original intention. 
+    4. Compress text size to as much as possible low count of characters
+
+    5. This is for yourself. 
+    It does not need to be human readable or understandable. 
+    Abuse of language mixing, abbreviations, symbols (unicode and emoji), 
+    or any other encodings or internal representations is all permissible, 
+    as long as it, if pasted in a new inference cycle, 
+    will yield near-identical results as the original text. 
+
+Complete answer should be formatted this way:
+
+```
+TEXT_COMPRESSION: <text you compressed>
+```
 
 
+$text_to_compress
+
+"""
 
 
 # ```json
@@ -640,7 +672,7 @@ class PromptTemplateCreator:
         return user_prompt
 
     def get_query_based_text_compression_prompt(self, query: str, document_split: str) -> str:
-        user_prompt = self.prepare_template(QUERY_BASED_COMPRESSION_TEMPLATE_V2, query = query, text_to_compress=document_split)
+        user_prompt = self.prepare_template(QUERY_BASED_COMPRESSION_TEMPLATE_V1, query = query, text_to_compress=document_split)
         return user_prompt
 
     def get_document_text_compression_prompt(self, document_split: str) -> str:
@@ -654,8 +686,8 @@ class PromptTemplateCreator:
         return user_prompt
 
 
-    def get_document_text_chunks_prompt(self, text_to_chunk, last_previous_section) -> str:
-        text_to_chunk =
-        user_prompt = self.prepare_template(DOCUMENT_TEXT_CHUNKING_TEMPLATE_V1,
+    def get_document_semantic_text_chunks_prompt(self, text_to_chunk, last_previous_section) -> str:
+        text_to_chunk = text_to_chunk+" "+last_previous_section
+        user_prompt = self.prepare_template(DOCUMENT_SEMANTIC_TEXT_CHUNKING_TEMPLATE_V1,
                                             text_to_chunk=text_to_chunk)
         return user_prompt
