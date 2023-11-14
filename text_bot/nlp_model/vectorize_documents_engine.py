@@ -79,9 +79,27 @@ class VectorizeDocumentsEngine:
             return text_split_compression_check
 
 
-    def get_semantic_text_chunks(self, documents_split_txt):
-        text_split_compression = self.prompt_creator.get_document_text_compression(documents_split_txt)
-        text_split_compression_check = self.prompt_creator.get_document_text_compression_check(documents_split_txt, text_split_compression)
+    def get_semantic_text_chunks(self, documents_split_txt, last_previous_semantic_chunk = None):
+        semantic_text_chunks_list = self.prompt_creator.get_document_semantic_text_chunks(documents_split_txt, last_previous_semantic_chunk)
+
+        {
+            "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
+            "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+            "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+            "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
+                                   "упутство за лек"],
+            "Subsection Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
+            "Subsections": [
+                {
+                    "Subsection Title": "Садржина правилника",
+                    "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+                    "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+                    "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање",
+                                              "обележавање", "упутство за лек"],
+                    "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
+                }
+            ]
+        }
 
         if text_split_compression_check and "YES" in text_split_compression_check:
             return text_split_compression
@@ -170,26 +188,30 @@ class VectorizeDocumentsEngine:
         ct_document = self.get_document(documents_splits)
         if not self.splits_already_added_to_db(ct_document, documents_splits):
             ct_document.document_splits.all().delete()
-            
+
+            previous_last_semantic_chunk = None
             for i, documents_split in enumerate(documents_splits):
                 document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
-                split_text_compression = self.get_semantic_text_chunks(documents_split.page_content)
+                semantic_text_chunks_list = self.get_semantic_text_chunks(documents_split.page_content, previous_last_semantic_chunk)
 
-                print("Document title: ", ct_document.document_title)
-                print("Document filename: ", ct_document.document_filename)
-                print("Document page: ", document_page)
-                print("Split text: ", split_text)
-                print("Split text compression: ", split_text_compression)
+                previous_last_semantic_chunk = semantic_text_chunks_list[subsection][-1]
 
-                embedding = self.model.get_embedding(split_text)
+                for semantic_text_chunks_list in semantic_text_chunks_list:
+                    print("Document title: ", ct_document.document_title)
+                    print("Document filename: ", ct_document.document_filename)
+                    print("Document page: ", document_page)
+                    print("Split text: ", split_text)
+                    print("Split text compression: ", split_text_compression)
 
-                CTDocumentSplit.objects.create(
-                    ct_document=ct_document,
-                    document_title=ct_document.document_title,
-                    document_filename=ct_document.document_filename,
-                    document_page=document_page,
-                    split_text=split_text,
-                    split_text_compression=split_text_compression,
-                    split_number=i,
-                    embedding=embedding)
+                    embedding = self.model.get_embedding(split_text)
+
+                    CTDocumentSplit.objects.create(
+                        ct_document=ct_document,
+                        document_title=ct_document.document_title,
+                        document_filename=ct_document.document_filename,
+                        document_page=document_page,
+                        split_text=split_text,
+                        split_text_compression=split_text_compression,
+                        split_number=i,
+                        embedding=embedding)

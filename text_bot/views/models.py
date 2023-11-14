@@ -114,4 +114,23 @@ class CTDocumentSplit(models.Model):
 
     objects = CTDocumentSplitManager()
 
+    {
+        "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
+        "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+        "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+        "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
+                               "упутство за лек"],
+        "Subsection Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
+        "Subsections": [
+            {
+                "Subsection Title": "Садржина правилника",
+                "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+                "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+                "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
+                                          "упутство за лек"],
+                "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
+            }
+        ]
+    }
+
 
