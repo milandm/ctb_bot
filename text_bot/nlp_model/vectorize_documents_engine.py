@@ -20,10 +20,10 @@ from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 
-# MAX_CHUNK_SIZE = 500
-# MAX_CHUNK_OVERLAP_SIZE = 250
-MAX_CHUNK_SIZE = 1000
-MAX_CHUNK_OVERLAP_SIZE = 500
+MAX_CHUNK_SIZE = 500
+MAX_CHUNK_OVERLAP_SIZE = 250
+MAX_SEMANTIC_CHUNK_SIZE = 1000
+MAX_SEMANTIC_CHUNK_OVERLAP_SIZE = 500
 MAX_PAGE_SIZE = 5500
 
 HEADERS_TO_SPLIT_ON = [
@@ -38,6 +38,7 @@ class VectorizeDocumentsEngine:
         self.model = nlp_model
         self.prompt_creator = PromptCreator(nlp_model)
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=MAX_CHUNK_SIZE, chunk_overlap=MAX_CHUNK_OVERLAP_SIZE)
+        self.semantic_text_splitter = RecursiveCharacterTextSplitter(chunk_size=MAX_SEMANTIC_CHUNK_SIZE, chunk_overlap=MAX_SEMANTIC_CHUNK_OVERLAP_SIZE)
         self.pages_splitter = RecursiveCharacterTextSplitter(chunk_size=MAX_PAGE_SIZE, chunk_overlap=0)
         self.markdown_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=HEADERS_TO_SPLIT_ON)
 
@@ -49,24 +50,20 @@ class VectorizeDocumentsEngine:
             document_pages_formatted = self.get_document_split_pages(document_pages)
 
             md_header_splits = self.markdown_splitter.split_text(document_pages_formatted)
-
             documents_splits = self.text_splitter.split_documents(md_header_splits)
 
-            ct_document = self.get_document(documents_splits)
-            self.add_document_pages(ct_document, document_pages_formatted)
-            self.add_document_splits(ct_document, documents_splits)
+            self.add_document_pages(document_pages_formatted)
+            self.add_document_splits(documents_splits)
 
     def load_semantic_document_chunks_to_db(self):
         documents = load_documents("documents/")
         for document_pages in documents:
 
             document_pages_formatted = self.get_document_split_pages(document_pages)
-            md_header_splits = self.markdown_splitter.split_text(document_pages_formatted)
-            documents_splits = self.text_splitter.split_documents(md_header_splits)
+            documents_splits = self.semantic_text_splitter.split_documents(document_pages_formatted)
 
-            ct_document = self.get_document(documents_splits)
-            self.add_document_pages(ct_document, document_pages_formatted)
-            self.add_semantic_document_splits(ct_document, documents_splits)
+            self.add_document_pages(document_pages_formatted)
+            self.add_semantic_document_splits(documents_splits)
 
     def splits_already_added_to_db(self, ct_document, documents_splits):
         old_document_splits = ct_document.document_splits.all()
@@ -99,7 +96,6 @@ class VectorizeDocumentsEngine:
         return document_pages
 
 
-
     def get_document(self, documents_splits):
         document_filename = documents_splits[0].metadata.get("source", "")
 
@@ -128,8 +124,8 @@ class VectorizeDocumentsEngine:
 
         return ct_document
 
-    def add_document_pages(self, ct_document, document_pages):
-        old_document_pages = ct_document.document_pages.all()
+    def add_document_pages(self, document_pages):
+        ct_document = self.get_document(document_pages)
         if not self.pages_already_added_to_db(ct_document, document_pages):
             ct_document.document_pages.all().delete()
             for i, document_page in enumerate(document_pages):
@@ -143,7 +139,8 @@ class VectorizeDocumentsEngine:
         old_document_pages = ct_document.document_pages.all()
         return len(old_document_pages) >= len(document_pages)
 
-    def add_document_splits(self, ct_document, documents_splits):
+    def add_document_splits(self, documents_splits):
+        ct_document = self.get_document(documents_splits)
         if not self.splits_already_added_to_db(ct_document, documents_splits):
             ct_document.document_splits.all().delete()
             for i, documents_split in enumerate(documents_splits):
@@ -169,9 +166,11 @@ class VectorizeDocumentsEngine:
                     split_number=i,
                     embedding=embedding)
 
-    def add_semantic_document_splits(self, ct_document, documents_splits):
+    def add_semantic_document_splits(self, documents_splits):
+        ct_document = self.get_document(documents_splits)
         if not self.splits_already_added_to_db(ct_document, documents_splits):
             ct_document.document_splits.all().delete()
+            
             for i, documents_split in enumerate(documents_splits):
                 document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
