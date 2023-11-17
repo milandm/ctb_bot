@@ -493,7 +493,7 @@ Section Title: [Title of the Section]
 Section Content Summary: [Brief summary or key points of this subsection]
 Section Text:[Here provide section full original text content]
 Section References:[List of all important concepts and terms that this section refers to  taking in account whole text]
-Subsection Topics:[List of all topics and terms that this section refers to  taking in account whole text]
+Section Topics:[List of all topics and terms that this section refers to  taking in account whole text]
 
 Subsection Title: [Details of Subsection]
 Subsection Content Summary: [Brief summary or key points of this subsection]

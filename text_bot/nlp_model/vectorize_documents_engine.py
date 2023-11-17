@@ -16,7 +16,7 @@ from text_bot.utils import load_documents
 SENTENCE_MIN_LENGTH = 2
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
-from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
+from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage, CTDocumentSection, CTDocumentSubsection
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 
@@ -72,34 +72,6 @@ class VectorizeDocumentsEngine:
     def get_text_compression(self, documents_split_txt):
         text_split_compression = self.prompt_creator.get_document_text_compression(documents_split_txt)
         text_split_compression_check = self.prompt_creator.get_document_text_compression_check(documents_split_txt, text_split_compression)
-
-        if text_split_compression_check and "YES" in text_split_compression_check:
-            return text_split_compression
-        else:
-            return text_split_compression_check
-
-
-    def get_semantic_text_chunks(self, documents_split_txt, last_previous_semantic_chunk = None):
-        semantic_text_chunks_list = self.prompt_creator.get_document_semantic_text_chunks(documents_split_txt, last_previous_semantic_chunk)
-
-        {
-            "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
-            "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
-            "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
-            "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
-                                   "упутство за лек"],
-            "Subsection Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
-            "Subsections": [
-                {
-                    "Subsection Title": "Садржина правилника",
-                    "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
-                    "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
-                    "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање",
-                                              "обележавање", "упутство за лек"],
-                    "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
-                }
-            ]
-        }
 
         if text_split_compression_check and "YES" in text_split_compression_check:
             return text_split_compression
@@ -193,25 +165,105 @@ class VectorizeDocumentsEngine:
             for i, documents_split in enumerate(documents_splits):
                 document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
-                semantic_text_chunks_list = self.get_semantic_text_chunks(documents_split.page_content, previous_last_semantic_chunk)
 
-                previous_last_semantic_chunk = semantic_text_chunks_list[subsection][-1]
+                semantic_sections_json_list = self.prompt_creator.get_document_semantic_text_chunks(split_text,
+                                                                                                  previous_last_semantic_chunk)
 
-                for semantic_text_chunks_list in semantic_text_chunks_list:
-                    print("Document title: ", ct_document.document_title)
-                    print("Document filename: ", ct_document.document_filename)
-                    print("Document page: ", document_page)
-                    print("Split text: ", split_text)
-                    print("Split text compression: ", split_text_compression)
+                if not semantic_sections_json_list:
+                    continue
 
-                    embedding = self.model.get_embedding(split_text)
+                previous_last_semantic_chunk = semantic_sections_json_list[-1].get("Subsections", [])[-1]
 
-                    CTDocumentSplit.objects.create(
+                for i, semantic_section_json in enumerate(semantic_sections_json_list):
+                    print("semantic_section_json: ", semantic_section_json.document_title)
+
+                    semantic_subsections_json_list = semantic_section_json.get("Subsections",[])
+
+                    section_title = semantic_section_json.get("Section Title","")
+                    section_text = semantic_section_json.get("Section Text","")
+                    section_content_summary = semantic_section_json.get("Section Content Summary","")
+                    section_references = semantic_section_json.get("Section References","")
+                    section_topics = semantic_section_json.get("Section Topics","")
+                    section_number = i
+
+                    # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
+
+                    title_embedding = self.model.get_embedding(section_title)
+                    text_embedding = self.model.get_embedding(section_text)
+                    content_summary_embedding = self.model.get_embedding(section_content_summary)
+                    references_embedding = self.model.get_embedding(section_references)
+                    topics_embedding = self.model.get_embedding(section_topics)
+
+                    ct_document_section = CTDocumentSection.objects.create(
                         ct_document=ct_document,
                         document_title=ct_document.document_title,
                         document_filename=ct_document.document_filename,
                         document_page=document_page,
-                        split_text=split_text,
-                        split_text_compression=split_text_compression,
-                        split_number=i,
-                        embedding=embedding)
+                        section_title = section_title,
+                        section_text = section_text,
+                        section_content_summary = section_content_summary,
+                        section_references = section_references,
+                        section_topics = section_topics,
+                        section_number = section_number,
+                        title_embedding = title_embedding,
+                        text_embedding = text_embedding,
+                        content_summary_embedding = content_summary_embedding,
+                        references_embedding = references_embedding,
+                        topics_embedding = topics_embedding)
+
+                    for j, semantic_subsection_json in enumerate(semantic_subsections_json_list):
+
+                        subsection_title = semantic_subsection_json.get("Subsection Title", "")
+                        subsection_text = semantic_subsection_json.get("Subsection Text", "")
+                        subsection_content_summary = semantic_subsection_json.get("Subsection Content Summary", "")
+                        subsection_references = semantic_subsection_json.get("Subsection References", "")
+                        subsection_topics = semantic_subsection_json.get("Subsection Topics", "")
+                        subsection_number = j
+
+                        # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
+
+                        subtitle_embedding = self.model.get_embedding(subsection_title)
+                        subtext_embedding = self.model.get_embedding(subsection_text)
+                        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
+                        subreferences_embedding = self.model.get_embedding(subsection_references)
+                        subtopics_embedding = self.model.get_embedding(subsection_topics)
+
+                        CTDocumentSubsection.objects.create(
+                            ct_document_section=ct_document_section,
+                            document_title=ct_document.document_title,
+                            document_filename=ct_document.document_filename,
+                            document_page=document_page,
+                            subsection_title=subsection_title,
+                            subsection_text=subsection_text,
+                            subsection_content_summary=subsection_content_summary,
+                            subsection_references=subsection_references,
+                            subsection_topics=subsection_topics,
+                            subsection_number=subsection_number,
+                            title_embedding=subtitle_embedding,
+                            text_embedding=subtext_embedding,
+                            content_summary_embedding=subcontent_summary_embedding,
+                            references_embedding=subreferences_embedding,
+                            topics_embedding=subtopics_embedding)
+
+
+
+                # {
+                #     "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
+                #     "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+                #     "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+                #     "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
+                #                            "упутство за лек"],
+                #     "Section Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
+                #     "Subsections": [
+                #         {
+                #             "Subsection Title": "Садржина правилника",
+                #             "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
+                #             "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
+                #             "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање",
+                #                                       "обележавање", "упутство за лек"],
+                #             "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
+                #         }
+                #     ]
+                # }
+
+
