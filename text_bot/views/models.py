@@ -1,6 +1,8 @@
 from django.db import models
 from pgvector.django import VectorField
-from pgvector.django import IvfflatIndex, HnswIndex
+from pgvector.django import IvfflatIndex
+# from pgvector.django import HnswIndex
+
 from text_bot.views.managers import TopChatQuestionsManager, CTDocumentSplitManager
 
 
@@ -83,13 +85,13 @@ class CTDocumentSplit(models.Model):
             ),
 
             # or
-            HnswIndex(
-                name='document_hnsw_index',
-                fields=['embedding'],
-                m=16,
-                ef_construction=64,
-                opclasses=['vector_l2_ops']
-            )
+            # HnswIndex(
+            #     name='document_hnsw_index',
+            #     fields=['embedding'],
+            #     m=16,
+            #     ef_construction=64,
+            #     opclasses=['vector_l2_ops']
+            # )
         ]
 
     # find split with main context
@@ -139,21 +141,21 @@ class CTDocumentSection(models.Model):
             ),
 
             # or
-            HnswIndex(
-                name='document_section_hnsw_index',
-                fields=['title_embedding',
-                        'text_embedding',
-                        'content_summary_embedding',
-                        'references_embedding',
-                        'topics_embedding'],
-                m=16,
-                ef_construction=64,
-                opclasses=['vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops']
-            )
+            # HnswIndex(
+            #     name='document_section_hnsw_index',
+            #     fields=['title_embedding',
+            #             'text_embedding',
+            #             'content_summary_embedding',
+            #             'references_embedding',
+            #             'topics_embedding'],
+            #     m=16,
+            #     ef_construction=64,
+            #     opclasses=['vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops']
+            # )
         ]
 
     # find split with main context
@@ -214,21 +216,21 @@ class CTDocumentSubsection(models.Model):
             ),
 
             # or
-            HnswIndex(
-                name='document_subsection_hnsw_index',
-                fields=['title_embedding',
-                        'text_embedding',
-                        'content_summary_embedding',
-                        'references_embedding',
-                        'topics_embedding'],
-                m=16,
-                ef_construction=64,
-                opclasses=['vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops',
-                           'vector_l2_ops']
-            )
+            # HnswIndex(
+            #     name='document_subsection_hnsw_index',
+            #     fields=['title_embedding',
+            #             'text_embedding',
+            #             'content_summary_embedding',
+            #             'references_embedding',
+            #             'topics_embedding'],
+            #     m=16,
+            #     ef_construction=64,
+            #     opclasses=['vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops',
+            #                'vector_l2_ops']
+            # )
         ]
 
     # find split with main context
