@@ -161,7 +161,7 @@ class VectorizeDocumentsEngine:
         if not self.splits_already_added_to_db(ct_document, documents_splits):
             ct_document.document_splits.all().delete()
 
-            previous_last_semantic_chunk = None
+            previous_last_semantic_chunk = ""
             for i, documents_split in enumerate(documents_splits):
                 document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
