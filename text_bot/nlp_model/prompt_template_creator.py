@@ -686,8 +686,8 @@ class PromptTemplateCreator:
         return user_prompt
 
 
-    def get_document_semantic_text_chunks_prompt(self, text_to_chunk, last_previous_section) -> str:
-        text_to_chunk = text_to_chunk+" "+last_previous_section
+    def get_document_semantic_text_chunks_prompt(self, new_text_to_chunk, last_previous_section) -> str:
+        text_to_chunk = new_text_to_chunk+" "+last_previous_section
         user_prompt = self.prepare_template(DOCUMENT_SEMANTIC_TEXT_CHUNKING_TEMPLATE_V1,
                                             text_to_chunk=text_to_chunk)
         return user_prompt

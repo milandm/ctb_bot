@@ -80,6 +80,24 @@ def extract_json_data(input_string):
         # Parse the JSON string into a Python object
         json_data = json.loads(json_string)
 
+def extract_clean_json_data(input_string):
+    # Regular expression to find JSON structure
+    json_pattern = r"```json(.+?)```"
+
+    # Search for JSON in the given text
+    match = re.search(json_pattern, input_string, re.DOTALL)
+
+    if match:
+        json_text = match.group(1).strip()  # Remove extra spaces or newlines
+        try:
+            # Parse the extracted text to validate and format as JSON
+            parsed_json = json.loads(json_text)
+            return json.dumps(parsed_json, indent=4, ensure_ascii=False)
+        except json.JSONDecodeError as e:
+            return f"Error parsing JSON: {e}"
+    else:
+        return "No JSON found in the text"
+
 
 
 def remove_quotes(s):

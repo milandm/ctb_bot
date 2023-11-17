@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from text_bot.nlp_model.config import DATA
 from text_bot.nlp_model.nlp_model import NlpModel
-from text_bot.utils import load_documents, remove_quotes, extract_single_value_openai_content, extract_json_data
+from text_bot.utils import load_documents, remove_quotes, extract_single_value_openai_content, extract_clean_json_data
 
 # SENTENCE_MIN_LENGTH = 15
 SENTENCE_MIN_LENGTH = 2
@@ -93,5 +93,5 @@ class PromptCreator:
         semantic_text_chunks_content = semantic_text_chunk_openai_response.get("choices")[0].get("message").get(
             "content")
 
-        semantic_text_chunks_content_json_list = extract_json_data(semantic_text_chunks_content)
+        semantic_text_chunks_content_json_list = extract_clean_json_data(semantic_text_chunks_content)
         return semantic_text_chunks_content_json_list
