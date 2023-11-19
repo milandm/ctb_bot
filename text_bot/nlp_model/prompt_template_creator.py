@@ -480,11 +480,11 @@ You are expert for clinical trial research and you should check if given respons
 """
 
 DOCUMENT_SEMANTIC_TEXT_CHUNKING_TEMPLATE_V1 = """for this given text : 
-$text_to_chunk   
-
+$text_to_chunk 
 
 Chunk this text in semantically connected  text units and format output as  json  list.
-Identify the main sections and subsections, 
+
+Extract the semantic sections and for every section extract list of its subsections, 
 understanding their content, and then dividing them into coherent units that can be represented in a JSON format.
 
 For every unit please provide:
@@ -494,7 +494,7 @@ Section Content Summary: [Brief summary or key points of this subsection]
 Section Text:[Here provide section full original text content]
 Section References:[List of all important concepts and terms that this section refers to  taking in account whole text]
 Section Topics:[List of all topics and terms that this section refers to  taking in account whole text]
-
+For this section give Subsection List:
 Subsection Title: [Details of Subsection]
 Subsection Content Summary: [Brief summary or key points of this subsection]
 Subsection Text :[Here provide subsection full original text content]
@@ -504,7 +504,27 @@ Subsection Topics:[List of all topics and terms that this subsection refers to  
 
 
 !!!It is MANDATORY to populate all of these values!!!
-!!!It is MANDATORY to give original content!!!"""
+!!!It is MANDATORY to give original content!!!
+
+Output should look like this:
+
+[{
+    "section_title": "",
+    "section_content_summary": "",
+    "section_text": "",
+    "section_references": [],
+    "section_topics": [],
+    "subsection_list": 
+    [
+        {
+            "subsection_title": "",
+            "subsection_content_summary": "",
+            "subsection_text": "",
+            "subsection_references": [],
+            "subsection_topics": []
+        }
+    ]
+}]"""
 
 
 

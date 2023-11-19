@@ -172,18 +172,38 @@ class VectorizeDocumentsEngine:
                 if not semantic_sections_json_list:
                     continue
 
-                previous_last_semantic_chunk = semantic_sections_json_list[-1].get("Subsections", [])[-1]
+                previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1]
 
                 for i, semantic_section_json in enumerate(semantic_sections_json_list):
                     print("semantic_section_json: ", semantic_section_json.document_title)
 
-                    semantic_subsections_json_list = semantic_section_json.get("Subsections",[])
+                    semantic_subsections_json_list = semantic_section_json.get("subsection_list",[])
 
-                    section_title = semantic_section_json.get("Section Title","")
-                    section_text = semantic_section_json.get("Section Text","")
-                    section_content_summary = semantic_section_json.get("Section Content Summary","")
-                    section_references = semantic_section_json.get("Section References","")
-                    section_topics = semantic_section_json.get("Section Topics","")
+                    # [{
+                    #     "section_title": "",
+                    #     "section_content_summary": "",
+                    #     "section_text": "",
+                    #     "section_references": [],
+                    #     "section_topics": [],
+                    #     "subsection_list":
+                    #         [
+                    #             {
+                    #                 "subsection_title": "",
+                    #                 "subsection_content_summary": "",
+                    #                 "subsection_text": "",
+                    #                 "subsection_references": [],
+                    #                 "subsection_topics": []
+                    #             }
+                    #         ]
+                    # }]
+                    # """
+
+
+                    section_title = semantic_section_json.get("section_title","")
+                    section_text = semantic_section_json.get("section_text","")
+                    section_content_summary = semantic_section_json.get("section_content_summary","")
+                    section_references = semantic_section_json.get("section_references","")
+                    section_topics = semantic_section_json.get("section_topics","")
                     section_number = i
 
                     # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
@@ -213,11 +233,11 @@ class VectorizeDocumentsEngine:
 
                     for j, semantic_subsection_json in enumerate(semantic_subsections_json_list):
 
-                        subsection_title = semantic_subsection_json.get("Subsection Title", "")
-                        subsection_text = semantic_subsection_json.get("Subsection Text", "")
-                        subsection_content_summary = semantic_subsection_json.get("Subsection Content Summary", "")
-                        subsection_references = semantic_subsection_json.get("Subsection References", "")
-                        subsection_topics = semantic_subsection_json.get("Subsection Topics", "")
+                        subsection_title = semantic_subsection_json.get("subsection_title", "")
+                        subsection_text = semantic_subsection_json.get("subsection_text", "")
+                        subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
+                        subsection_references = semantic_subsection_json.get("subsection_references", "")
+                        subsection_topics = semantic_subsection_json.get("subsection_topics", "")
                         subsection_number = j
 
                         # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
