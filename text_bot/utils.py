@@ -92,7 +92,8 @@ def extract_clean_json_data(input_string):
         try:
             # Parse the extracted text to validate and format as JSON
             parsed_json = json.loads(json_text)
-            return json.dumps(parsed_json, indent=4, ensure_ascii=False)
+            # return json.dumps(parsed_json, indent=4, ensure_ascii=False)
+            return parsed_json
         except json.JSONDecodeError as e:
             return f"Error parsing JSON: {e}"
     else:

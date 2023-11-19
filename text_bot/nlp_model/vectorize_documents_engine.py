@@ -175,7 +175,7 @@ class VectorizeDocumentsEngine:
                 previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1]
 
                 for i, semantic_section_json in enumerate(semantic_sections_json_list):
-                    print("semantic_section_json: ", semantic_section_json.document_title)
+                    print("semantic_section_json: ", str(semantic_section_json))
 
                     semantic_subsections_json_list = semantic_section_json.get("subsection_list",[])
 
@@ -211,8 +211,8 @@ class VectorizeDocumentsEngine:
                     title_embedding = self.model.get_embedding(section_title)
                     text_embedding = self.model.get_embedding(section_text)
                     content_summary_embedding = self.model.get_embedding(section_content_summary)
-                    references_embedding = self.model.get_embedding(section_references)
-                    topics_embedding = self.model.get_embedding(section_topics)
+                    references_embedding = self.model.get_embedding(','.join(section_references))
+                    topics_embedding = self.model.get_embedding(','.join(section_topics))
 
                     ct_document_section = CTDocumentSection.objects.create(
                         ct_document=ct_document,
@@ -245,8 +245,8 @@ class VectorizeDocumentsEngine:
                         subtitle_embedding = self.model.get_embedding(subsection_title)
                         subtext_embedding = self.model.get_embedding(subsection_text)
                         subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-                        subreferences_embedding = self.model.get_embedding(subsection_references)
-                        subtopics_embedding = self.model.get_embedding(subsection_topics)
+                        subreferences_embedding = self.model.get_embedding(','.join(subsection_references))
+                        subtopics_embedding = self.model.get_embedding(','.join(subsection_topics))
 
                         CTDocumentSubsection.objects.create(
                             ct_document_section=ct_document_section,
