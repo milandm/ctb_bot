@@ -77,6 +77,25 @@ class CTDocumentSplitManager(models.Manager):
 
 class CTDocumentSectionManager(models.Manager):
 
+    # [{
+    #     "section_title": "",
+    #     "section_content_summary": "",
+    #     "section_text": "",
+    #     "section_references": [],
+    #     "section_topics": [],
+    #     "subsection_list":
+    #         [
+    #             {
+    #                 "subsection_title": "",
+    #                 "subsection_content_summary": "",
+    #                 "subsection_text": "",
+    #                 "subsection_references": [],
+    #                 "subsection_topics": []
+    #             }
+    #         ]
+    # }]
+    # """
+
     def create_from_json(self, semantic_section_json, section_idx, ct_document, document_page):
 
         section_title = semantic_section_json.get("section_title","")

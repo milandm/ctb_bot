@@ -3,7 +3,19 @@ from pgvector.django import VectorField
 from pgvector.django import IvfflatIndex
 from pgvector.django import HnswIndex
 
-from text_bot.views.managers import TopChatQuestionsManager, CTDocumentSplitManager
+from text_bot.views.managers import TopChatQuestionsManager,\
+                                     UserHistoryManager,\
+                                     CTDocumentSplitManager,\
+                                     CTDocumentSectionManager,\
+                                     CTDocumentSectionTitleManager,\
+                                     CTDocumentSectionTextManager,\
+                                     CTDocumentSectionReferencesManager,\
+                                     CTDocumentSectionTopicsManager,\
+                                     CTDocumentSubsectionManager,\
+                                     CTDocumentSubsectionTitleManager,\
+                                     CTDocumentSubsectionTextManager,\
+                                     CTDocumentSubsectionReferencesManager,\
+                                     CTDocumentSubsectionTopicsManager
 
 
 # { input: searchQuery, history_key: historyKey }
@@ -152,6 +164,8 @@ class CTDocumentSection(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSectionManager()
+
 class CTDocumentSectionTitle(models.Model):
     class Meta:
         ordering = ['-id']
@@ -182,6 +196,7 @@ class CTDocumentSectionTitle(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSectionTitleManager()
 
 class CTDocumentSectionText(models.Model):
     class Meta:
@@ -213,6 +228,8 @@ class CTDocumentSectionText(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSectionTextManager()
+
 
 class CTDocumentSectionReferences(models.Model):
     class Meta:
@@ -243,6 +260,8 @@ class CTDocumentSectionReferences(models.Model):
     topics_embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CTDocumentSectionReferencesManager()
 
 
 class CTDocumentSectionTopics(models.Model):
@@ -277,6 +296,9 @@ class CTDocumentSectionTopics(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSectionTopicsManager()
+
+
 
 class CTDocumentSubsection(models.Model):
     class Meta:
@@ -308,6 +330,8 @@ class CTDocumentSubsection(models.Model):
     topics_embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CTDocumentSubsectionManager()
 
 
 class CTDocumentSubsectionTitle(models.Model):
@@ -341,6 +365,7 @@ class CTDocumentSubsectionTitle(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSubsectionTitleManager()
 
 class CTDocumentSubsectionText(models.Model):
     class Meta:
@@ -373,6 +398,7 @@ class CTDocumentSubsectionText(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSubsectionTextManager()
 
 class CTDocumentSubsectionReferences(models.Model):
     class Meta:
@@ -404,6 +430,8 @@ class CTDocumentSubsectionReferences(models.Model):
     topics_embedding = VectorField(dimensions=MULTI_QA_DISTILBERT_COS_V1_VECTOR_SIZE)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CTDocumentSubsectionReferencesManager()
 
 
 class CTDocumentSubsectionTopics(models.Model):
@@ -437,6 +465,9 @@ class CTDocumentSubsectionTopics(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CTDocumentSubsectionTopicsManager()
+
+
 # {
 #     "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
 #     "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
@@ -449,8 +480,8 @@ class CTDocumentSubsectionTopics(models.Model):
 #             "Subsection Title": "Садржина правилника",
 #             "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
 #             "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
-#             "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
-#                                       "упутство за лек"],
+#             "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање",
+#                                       "обележавање", "упутство за лек"],
 #             "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
 #         }
 #     ]

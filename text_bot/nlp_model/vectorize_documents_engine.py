@@ -16,7 +16,20 @@ from text_bot.utils import load_documents
 SENTENCE_MIN_LENGTH = 2
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
-from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage, CTDocumentSection, CTDocumentSubsection
+from text_bot.views.models import CTDocument, \
+    CTDocumentSplit, \
+    CTDocumentPage, \
+    CTDocumentSection, \
+    CTDocumentSectionTitle, \
+    CTDocumentSectionText, \
+    CTDocumentSectionReferences, \
+    CTDocumentSectionTopics, \
+    CTDocumentSubsection,\
+    CTDocumentSubsectionTitle,\
+    CTDocumentSubsectionText,\
+    CTDocumentSubsectionReferences,\
+    CTDocumentSubsectionTopics
+
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 
@@ -179,115 +192,19 @@ class VectorizeDocumentsEngine:
 
                     semantic_subsections_json_list = semantic_section_json.get("subsection_list",[])
 
-                    # [{
-                    #     "section_title": "",
-                    #     "section_content_summary": "",
-                    #     "section_text": "",
-                    #     "section_references": [],
-                    #     "section_topics": [],
-                    #     "subsection_list":
-                    #         [
-                    #             {
-                    #                 "subsection_title": "",
-                    #                 "subsection_content_summary": "",
-                    #                 "subsection_text": "",
-                    #                 "subsection_references": [],
-                    #                 "subsection_topics": []
-                    #             }
-                    #         ]
-                    # }]
-                    # """
-
-
-                    section_title = semantic_section_json.get("section_title","")
-                    section_text = semantic_section_json.get("section_text","")
-                    section_content_summary = semantic_section_json.get("section_content_summary","")
-                    section_references = semantic_section_json.get("section_references","")
-                    section_references_join = ','.join(section_references)
-                    section_topics = semantic_section_json.get("section_topics","")
-                    section_topics_join = ','.join(section_topics)
-                    section_number = i
-
-                    # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
-
-                    title_embedding = self.model.get_embedding(section_title)
-                    text_embedding = self.model.get_embedding(section_text)
-                    content_summary_embedding = self.model.get_embedding(section_content_summary)
-                    references_embedding = self.model.get_embedding(section_references_join)
-                    topics_embedding = self.model.get_embedding(section_topics_join)
-
-                    ct_document_section = CTDocumentSection.objects.create(
-                        ct_document=ct_document,
-                        document_title=ct_document.document_title,
-                        document_filename=ct_document.document_filename,
-                        document_page=document_page,
-                        section_title = section_title,
-                        section_text = section_text,
-                        section_content_summary = section_content_summary,
-                        section_references = section_references,
-                        section_topics = section_topics,
-                        section_number = section_number,
-                        title_embedding = title_embedding,
-                        text_embedding = text_embedding,
-                        content_summary_embedding = content_summary_embedding,
-                        references_embedding = references_embedding,
-                        topics_embedding = topics_embedding)
+                    ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, i, ct_document, document_page)
+                    ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, i, ct_document_section)
+                    ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, i, ct_document_section)
+                    ct_document_section_references = CTDocumentSectionReferences.objects.create_from_json(semantic_section_json, i, ct_document_section)
+                    ct_document_section_topics = CTDocumentSectionTopics.objects.create_from_json(semantic_section_json, i, ct_document_section)
 
                     for j, semantic_subsection_json in enumerate(semantic_subsections_json_list):
 
-                        subsection_title = semantic_subsection_json.get("subsection_title", "")
-                        subsection_text = semantic_subsection_json.get("subsection_text", "")
-                        subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
-                        subsection_references = semantic_subsection_json.get("subsection_references", "")
-                        subsection_references_join = ','.join(subsection_references)
-                        subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-                        subsection_topics_join = ','.join(subsection_topics)
-                        subsection_number = j
+                        ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, j, ct_document_section)
+                        ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
+                        ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
+                        ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
+                        ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
 
-                        # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
-
-                        subtitle_embedding = self.model.get_embedding(subsection_title)
-                        subtext_embedding = self.model.get_embedding(subsection_text)
-                        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-                        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-                        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
-
-                        CTDocumentSubsection.objects.create(
-                            ct_document_section=ct_document_section,
-                            document_title=ct_document.document_title,
-                            document_filename=ct_document.document_filename,
-                            document_page=document_page,
-                            subsection_title=subsection_title,
-                            subsection_text=subsection_text,
-                            subsection_content_summary=subsection_content_summary,
-                            subsection_references=subsection_references,
-                            subsection_topics=subsection_topics,
-                            subsection_number=subsection_number,
-                            title_embedding=subtitle_embedding,
-                            text_embedding=subtext_embedding,
-                            content_summary_embedding=subcontent_summary_embedding,
-                            references_embedding=subreferences_embedding,
-                            topics_embedding=subtopics_embedding)
-
-
-
-                # {
-                #     "Section Title": "I. УВОДНЕ ОДРЕДБЕ",
-                #     "Section Content Summary": "Introduction to the regulation specifying the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
-                #     "Section Text": "I. УВОДНЕ ОДРЕДБЕ\nСадржина правилника\nЧлан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
-                #     "Section References": ["правилник", "лек", "спољње паковање", "унутрашње паковање", "обележавање",
-                #                            "упутство за лек"],
-                #     "Section Topics": ["Садржина правилника", "обележавање", "упутство за лек"],
-                #     "Subsections": [
-                #         {
-                #             "Subsection Title": "Садржина правилника",
-                #             "Subsection Content Summary": "Defines the regulation of the content and labeling of external and internal packaging of medicines, additional labeling, and the content of the medicine instructions.",
-                #             "Subsection Text": "Члан 1.\nОвим правилником прописује се садржај и начин обележавања спољњег и унутрашњег паковања\nлека, додатно обележавање лека, као и садржај упутства за лек.",
-                #             "Subsection References": ["правилник", "лек", "спољње паковање", "унутрашње паковање",
-                #                                       "обележавање", "упутство за лек"],
-                #             "Subsection Topics": ["правилник", "обележавање", "упутство за лек"]
-                #         }
-                #     ]
-                # }
 
 
