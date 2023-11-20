@@ -625,6 +625,8 @@ $text_to_compress
 
 
 
+# please summarize all most important information from given text related to this question
+
 class PromptTemplateCreator:
 
 
