@@ -185,7 +185,7 @@ class VectorizeDocumentsEngine:
                 if not semantic_sections_json_list:
                     continue
 
-                previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1]
+                previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1].get("subsection_text", "")
 
                 for i, raw_semantic_section_json in enumerate(semantic_sections_json_list):
                     print("semantic_section_json: ", str(raw_semantic_section_json))

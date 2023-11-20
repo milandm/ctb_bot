@@ -626,6 +626,8 @@ $text_to_compress
 
 
 # please summarize all most important information from given text related to this question
+# extract all important information from given text related to this question
+# extract enlist and summarize all important information from given text related to this question
 
 class PromptTemplateCreator:
 
