@@ -192,7 +192,7 @@ class VectorizeDocumentsEngine:
 
                     semantic_subsections_json_list = raw_semantic_section_json.get("subsection_list",[])
 
-                    semantic_section_json = CTDocumentSection.objects.prepare_json(raw_semantic_section_json, i)
+                    semantic_section_json = self.prepare_semantic_section_json(raw_semantic_section_json, i)
                     ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
                     ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, ct_document_section)
                     ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, ct_document_section)
@@ -201,7 +201,7 @@ class VectorizeDocumentsEngine:
 
                     for j, raw_semantic_subsection_json in enumerate(semantic_subsections_json_list):
 
-                        semantic_subsection_json = CTDocumentSubsection.objects.prepare_json(raw_semantic_subsection_json, j)
+                        semantic_subsection_json = self.prepare_semantic_subsection_json(raw_semantic_subsection_json, j)
                         ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, ct_document_section)
                         ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
                         ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
@@ -210,3 +210,70 @@ class VectorizeDocumentsEngine:
 
 
 
+
+    def prepare_semantic_section_json(self, semantic_section_json, section_idx):
+
+        section_title = semantic_section_json.get("section_title","")
+        section_text = semantic_section_json.get("section_text","")
+        section_content_summary = semantic_section_json.get("section_content_summary","")
+
+        section_references = semantic_section_json.get("section_references","")
+        section_references_join = ','.join(section_references)
+
+        section_topics = semantic_section_json.get("section_topics","")
+        section_topics_join = ','.join(section_topics)
+
+        section_number = section_idx
+        semantic_section_json["section_number"] = section_number
+
+
+        title_embedding = self.model.get_embedding(section_title)
+        semantic_section_json["title_embedding"] = title_embedding
+
+        text_embedding = self.model.get_embedding(section_text)
+        semantic_section_json["text_embedding"] = text_embedding
+
+        content_summary_embedding = self.model.get_embedding(section_content_summary)
+        semantic_section_json["content_summary_embedding"] = content_summary_embedding
+
+        references_embedding = self.model.get_embedding(section_references_join)
+        semantic_section_json["references_embedding"] = references_embedding
+
+        topics_embedding = self.model.get_embedding(section_topics_join)
+        semantic_section_json["topics_embedding"] = topics_embedding
+
+        return semantic_section_json
+
+
+    def prepare_semantic_subsection_json(self, semantic_subsection_json, subsection_idx):
+
+        subsection_title = semantic_subsection_json.get("subsection_title", "")
+        subsection_text = semantic_subsection_json.get("subsection_text", "")
+        subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
+
+        subsection_references = semantic_subsection_json.get("subsection_references", "")
+        subsection_references_join = ','.join(subsection_references)
+
+        subsection_topics = semantic_subsection_json.get("subsection_topics", "")
+        subsection_topics_join = ','.join(subsection_topics)
+
+        subsection_number = subsection_idx
+        semantic_subsection_json["subsection_number"] = subsection_number
+
+
+        subsection_title_embedding = self.model.get_embedding(subsection_title)
+        semantic_subsection_json["subsection_title_embedding"] = subsection_title_embedding
+
+        subsection_text_embedding = self.model.get_embedding(subsection_text)
+        semantic_subsection_json["subsection_text_embedding"] = subsection_text_embedding
+
+        subsection_content_summary_embedding = self.model.get_embedding(subsection_content_summary)
+        semantic_subsection_json["subsection_content_summary_embedding"] = subsection_content_summary_embedding
+
+        subsection_references_embedding = self.model.get_embedding(subsection_references_join)
+        semantic_subsection_json["subsection_references_embedding"] = subsection_references_embedding
+
+        subsection_topics_embedding = self.model.get_embedding(subsection_topics_join)
+        semantic_subsection_json["subsection_topics_embedding"] = subsection_topics_embedding
+
+        return semantic_subsection_json
