@@ -305,7 +305,7 @@ class CTDocumentSubsection(models.Model):
         ordering = ['-id']
         indexes = [
             HnswIndex(
-                name='subsection_summary_hnsw_index',
+                name='subs_summary_hnsw_index',
                 fields=['content_summary_embedding'],
                 m=16,
                 ef_construction=64,
@@ -339,7 +339,7 @@ class CTDocumentSubsectionTitle(models.Model):
         ordering = ['-id']
         indexes = [
             HnswIndex(
-                name='subsection_title_hnsw_index',
+                name='subs_title_hnsw_index',
                 fields=['title_embedding'],
                 m=16,
                 ef_construction=64,
@@ -372,7 +372,7 @@ class CTDocumentSubsectionText(models.Model):
         ordering = ['-id']
         indexes = [
             HnswIndex(
-                name='subsection_text_hnsw_index',
+                name='subs_text_hnsw_index',
                 fields=['text_embedding'],
                 m=16,
                 ef_construction=64,
@@ -405,7 +405,7 @@ class CTDocumentSubsectionReferences(models.Model):
         ordering = ['-id']
         indexes = [
             HnswIndex(
-                name='subsection_references_hnsw_index',
+                name='subs_references_hnsw_index',
                 fields=['references_embedding'],
                 m=16,
                 ef_construction=64,
@@ -439,7 +439,7 @@ class CTDocumentSubsectionTopics(models.Model):
         ordering = ['-id']
         indexes = [
             HnswIndex(
-                name='subsection_topics_hnsw_index',
+                name='subs_topics_hnsw_index',
                 fields=['topics_embedding'],
                 m=16,
                 ef_construction=64,
