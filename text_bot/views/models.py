@@ -138,7 +138,7 @@ class CTDocumentSection(models.Model):
                 fields=['content_summary_embedding'],
                 m=16,
                 ef_construction=64,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 
@@ -175,7 +175,7 @@ class CTDocumentSectionTitle(models.Model):
                 fields=['title_embedding'],
                 m=16,
                 ef_construction=64,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 
@@ -207,7 +207,7 @@ class CTDocumentSectionText(models.Model):
                 fields=['text_embedding'],
                 m=16,
                 ef_construction=64,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 
@@ -240,7 +240,7 @@ class CTDocumentSectionReferences(models.Model):
                 fields=['references_embedding'],
                 m=16,
                 ef_construction=64,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 
@@ -273,7 +273,7 @@ class CTDocumentSectionTopics(models.Model):
                 fields=['topics_embedding'],
                 m=16,
                 ef_construction=64,
-                opclasses=['vector_l2_ops']
+                opclasses=['vector_cosine_ops']
             )
         ]
 
@@ -307,8 +307,8 @@ class CTDocumentSubsection(models.Model):
             HnswIndex(
                 name='subsection_summary_hnsw_index',
                 fields=['content_summary_embedding'],
-                lists=100,
-                # probes = 10,
+                m=16,
+                ef_construction=64,
                 opclasses=['vector_cosine_ops']
             )
         ]
@@ -341,8 +341,8 @@ class CTDocumentSubsectionTitle(models.Model):
             HnswIndex(
                 name='subsection_title_hnsw_index',
                 fields=['title_embedding'],
-                lists=100,
-                # probes = 10,
+                m=16,
+                ef_construction=64,
                 opclasses=['vector_cosine_ops']
             )
         ]
@@ -374,8 +374,8 @@ class CTDocumentSubsectionText(models.Model):
             HnswIndex(
                 name='subsection_text_hnsw_index',
                 fields=['text_embedding'],
-                lists=100,
-                # probes = 10,
+                m=16,
+                ef_construction=64,
                 opclasses=['vector_cosine_ops']
             )
         ]
@@ -407,8 +407,8 @@ class CTDocumentSubsectionReferences(models.Model):
             HnswIndex(
                 name='subsection_references_hnsw_index',
                 fields=['references_embedding'],
-                lists=100,
-                # probes = 10,
+                m=16,
+                ef_construction=64,
                 opclasses=['vector_cosine_ops']
             )
         ]
@@ -441,8 +441,8 @@ class CTDocumentSubsectionTopics(models.Model):
             HnswIndex(
                 name='subsection_topics_hnsw_index',
                 fields=['topics_embedding'],
-                lists=100,
-                # probes = 10,
+                m=16,
+                ef_construction=64,
                 opclasses=['vector_cosine_ops']
             )
         ]
