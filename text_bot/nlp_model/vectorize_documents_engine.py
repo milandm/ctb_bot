@@ -188,9 +188,9 @@ class VectorizeDocumentsEngine:
                 previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1]
 
                 for i, raw_semantic_section_json in enumerate(semantic_sections_json_list):
-                    print("semantic_section_json: ", str(semantic_section_json))
+                    print("semantic_section_json: ", str(raw_semantic_section_json))
 
-                    semantic_subsections_json_list = semantic_section_json.get("subsection_list",[])
+                    semantic_subsections_json_list = raw_semantic_section_json.get("subsection_list",[])
 
                     semantic_section_json = CTDocumentSection.objects.prepare_json(raw_semantic_section_json, i)
                     ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
