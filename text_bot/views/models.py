@@ -147,11 +147,11 @@ class CTDocumentSection(models.Model):
     document_filename = models.CharField(max_length=100)
     document_page = models.IntegerField()
 
-    section_title = models.CharField(max_length=100)
-    section_text = models.CharField(max_length=1500)
-    section_content_summary = models.CharField(max_length=1500)
-    section_references = models.CharField(max_length=1500)
-    section_topics = models.CharField(max_length=1500)
+    section_title_value = models.CharField(max_length=100)
+    section_text_value = models.CharField(max_length=1500)
+    section_content_summary_value = models.CharField(max_length=1500)
+    section_references_value = models.CharField(max_length=1500)
+    section_topics_value = models.CharField(max_length=1500)
     section_number = models.IntegerField()
 
     # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
@@ -315,11 +315,11 @@ class CTDocumentSubsection(models.Model):
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_subsections')
 
-    subsection_title = models.CharField(max_length=100)
-    subsection_text = models.CharField(max_length=1500)
-    subsection_content_summary = models.CharField(max_length=1500)
-    subsection_references = models.CharField(max_length=1500)
-    subsection_topics = models.CharField(max_length=1500)
+    subsection_title_value = models.CharField(max_length=100)
+    subsection_text_value = models.CharField(max_length=1500)
+    subsection_content_summary_value = models.CharField(max_length=1500)
+    subsection_references_value = models.CharField(max_length=1500)
+    subsection_topics_value = models.CharField(max_length=1500)
     subsection_number = models.IntegerField()
 
 
