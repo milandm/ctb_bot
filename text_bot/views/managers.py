@@ -96,22 +96,52 @@ class CTDocumentSectionManager(models.Manager):
     # }]
     # """
 
-    def create_from_json(self, semantic_section_json, section_idx, ct_document, document_page):
+    def prepare_json(self, semantic_section_json, section_idx):
 
         section_title = semantic_section_json.get("section_title","")
         section_text = semantic_section_json.get("section_text","")
         section_content_summary = semantic_section_json.get("section_content_summary","")
+
         section_references = semantic_section_json.get("section_references","")
         section_references_join = ','.join(section_references)
+
         section_topics = semantic_section_json.get("section_topics","")
         section_topics_join = ','.join(section_topics)
+
         section_number = section_idx
+        semantic_section_json["section_number"] = section_number
+
 
         title_embedding = self.model.get_embedding(section_title)
+        semantic_section_json["title_embedding"] = title_embedding
+
         text_embedding = self.model.get_embedding(section_text)
+        semantic_section_json["text_embedding"] = text_embedding
+
         content_summary_embedding = self.model.get_embedding(section_content_summary)
+        semantic_section_json["content_summary_embedding"] = content_summary_embedding
+
         references_embedding = self.model.get_embedding(section_references_join)
+        semantic_section_json["references_embedding"] = references_embedding
+
         topics_embedding = self.model.get_embedding(section_topics_join)
+        semantic_section_json["topics_embedding"] = topics_embedding
+
+        return semantic_section_json
+
+    def create_from_json(self, semantic_section_json, ct_document, document_page):
+
+        section_title = semantic_section_json.get("section_title", "")
+        section_text = semantic_section_json.get("section_text", "")
+        section_content_summary = semantic_section_json.get("section_content_summary", "")
+        section_references = semantic_section_json.get("section_references", "")
+        section_topics = semantic_section_json.get("section_topics", "")
+        section_number = semantic_section_json["section_number"]
+        title_embedding = semantic_section_json["title_embedding"]
+        text_embedding = semantic_section_json["text_embedding"]
+        content_summary_embedding = semantic_section_json["content_summary_embedding"]
+        references_embedding = semantic_section_json["references_embedding"]
+        topics_embedding = semantic_section_json["topics_embedding"]
 
         ct_document_section = self.create(
             ct_document=ct_document,
@@ -135,21 +165,19 @@ class CTDocumentSectionManager(models.Manager):
 
 class CTDocumentSectionTitleManager(models.Manager):
 
-    def create_from_json(self, semantic_section_json, section_idx, ct_document_section):
+    def create_from_json(self, semantic_section_json, ct_document_section):
+
         section_title = semantic_section_json.get("section_title", "")
         section_text = semantic_section_json.get("section_text", "")
         section_content_summary = semantic_section_json.get("section_content_summary", "")
         section_references = semantic_section_json.get("section_references", "")
-        section_references_join = ','.join(section_references)
         section_topics = semantic_section_json.get("section_topics", "")
-        section_topics_join = ','.join(section_topics)
-        section_number = section_idx
-
-        title_embedding = self.model.get_embedding(section_title)
-        text_embedding = self.model.get_embedding(section_text)
-        content_summary_embedding = self.model.get_embedding(section_content_summary)
-        references_embedding = self.model.get_embedding(section_references_join)
-        topics_embedding = self.model.get_embedding(section_topics_join)
+        section_number = semantic_section_json["section_number"]
+        title_embedding = semantic_section_json["title_embedding"]
+        text_embedding = semantic_section_json["text_embedding"]
+        content_summary_embedding = semantic_section_json["content_summary_embedding"]
+        references_embedding = semantic_section_json["references_embedding"]
+        topics_embedding = semantic_section_json["topics_embedding"]
 
         ct_document_section = self.create(
             ct_document_section=ct_document_section,
@@ -170,21 +198,19 @@ class CTDocumentSectionTitleManager(models.Manager):
 
 class CTDocumentSectionTextManager(models.Manager):
 
-    def create_from_json(self, semantic_section_json, section_idx, ct_document_section):
+    def create_from_json(self, semantic_section_json, ct_document_section):
+
         section_title = semantic_section_json.get("section_title", "")
         section_text = semantic_section_json.get("section_text", "")
         section_content_summary = semantic_section_json.get("section_content_summary", "")
         section_references = semantic_section_json.get("section_references", "")
-        section_references_join = ','.join(section_references)
         section_topics = semantic_section_json.get("section_topics", "")
-        section_topics_join = ','.join(section_topics)
-        section_number = section_idx
-
-        title_embedding = self.model.get_embedding(section_title)
-        text_embedding = self.model.get_embedding(section_text)
-        content_summary_embedding = self.model.get_embedding(section_content_summary)
-        references_embedding = self.model.get_embedding(section_references_join)
-        topics_embedding = self.model.get_embedding(section_topics_join)
+        section_number = semantic_section_json["section_number"]
+        title_embedding = semantic_section_json["title_embedding"]
+        text_embedding = semantic_section_json["text_embedding"]
+        content_summary_embedding = semantic_section_json["content_summary_embedding"]
+        references_embedding = semantic_section_json["references_embedding"]
+        topics_embedding = semantic_section_json["topics_embedding"]
 
         ct_document_section = self.create(
             ct_document_section=ct_document_section,
@@ -205,21 +231,19 @@ class CTDocumentSectionTextManager(models.Manager):
 
 class CTDocumentSectionReferencesManager(models.Manager):
 
-    def create_from_json(self, semantic_section_json, section_idx, ct_document_section):
+    def create_from_json(self, semantic_section_json, ct_document_section):
+
         section_title = semantic_section_json.get("section_title", "")
         section_text = semantic_section_json.get("section_text", "")
         section_content_summary = semantic_section_json.get("section_content_summary", "")
         section_references = semantic_section_json.get("section_references", "")
-        section_references_join = ','.join(section_references)
         section_topics = semantic_section_json.get("section_topics", "")
-        section_topics_join = ','.join(section_topics)
-        section_number = section_idx
-
-        title_embedding = self.model.get_embedding(section_title)
-        text_embedding = self.model.get_embedding(section_text)
-        content_summary_embedding = self.model.get_embedding(section_content_summary)
-        references_embedding = self.model.get_embedding(section_references_join)
-        topics_embedding = self.model.get_embedding(section_topics_join)
+        section_number = semantic_section_json["section_number"]
+        title_embedding = semantic_section_json["title_embedding"]
+        text_embedding = semantic_section_json["text_embedding"]
+        content_summary_embedding = semantic_section_json["content_summary_embedding"]
+        references_embedding = semantic_section_json["references_embedding"]
+        topics_embedding = semantic_section_json["topics_embedding"]
 
         ct_document_section = self.create(
             ct_document_section=ct_document_section,
@@ -240,21 +264,19 @@ class CTDocumentSectionReferencesManager(models.Manager):
 
 class CTDocumentSectionTopicsManager(models.Manager):
 
-    def create_from_json(self, semantic_section_json, section_idx, ct_document_section):
+    def create_from_json(self, semantic_section_json, ct_document_section):
+
         section_title = semantic_section_json.get("section_title", "")
         section_text = semantic_section_json.get("section_text", "")
         section_content_summary = semantic_section_json.get("section_content_summary", "")
         section_references = semantic_section_json.get("section_references", "")
-        section_references_join = ','.join(section_references)
         section_topics = semantic_section_json.get("section_topics", "")
-        section_topics_join = ','.join(section_topics)
-        section_number = section_idx
-
-        title_embedding = self.model.get_embedding(section_title)
-        text_embedding = self.model.get_embedding(section_text)
-        content_summary_embedding = self.model.get_embedding(section_content_summary)
-        references_embedding = self.model.get_embedding(section_references_join)
-        topics_embedding = self.model.get_embedding(section_topics_join)
+        section_number = semantic_section_json["section_number"]
+        title_embedding = semantic_section_json["title_embedding"]
+        text_embedding = semantic_section_json["text_embedding"]
+        content_summary_embedding = semantic_section_json["content_summary_embedding"]
+        references_embedding = semantic_section_json["references_embedding"]
+        topics_embedding = semantic_section_json["topics_embedding"]
 
         ct_document_section = self.create(
             ct_document_section=ct_document_section,
@@ -275,21 +297,52 @@ class CTDocumentSectionTopicsManager(models.Manager):
 
 class CTDocumentSubsectionManager(models.Manager):
 
-    def create_from_json(self, semantic_subsection_json, subsection_idx, ct_document_section):
+    def prepare_json(self, semantic_subsection_json, subsection_idx):
+
+        subsection_title = semantic_subsection_json.get("subsection_title", "")
+        subsection_text = semantic_subsection_json.get("subsection_text", "")
+        subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
+
+        subsection_references = semantic_subsection_json.get("subsection_references", "")
+        subsection_references_join = ','.join(subsection_references)
+
+        subsection_topics = semantic_subsection_json.get("subsection_topics", "")
+        subsection_topics_join = ','.join(subsection_topics)
+
+        subsection_number = subsection_idx
+        semantic_subsection_json["subsection_number"] = subsection_number
+
+
+        subsection_title_embedding = self.model.get_embedding(subsection_title)
+        semantic_subsection_json["subsection_title_embedding"] = subsection_title_embedding
+
+        subsection_text_embedding = self.model.get_embedding(subsection_text)
+        semantic_subsection_json["subsection_text_embedding"] = subsection_text_embedding
+
+        subsection_content_summary_embedding = self.model.get_embedding(subsection_content_summary)
+        semantic_subsection_json["subsection_content_summary_embedding"] = subsection_content_summary_embedding
+
+        subsection_references_embedding = self.model.get_embedding(subsection_references_join)
+        semantic_subsection_json["subsection_references_embedding"] = subsection_references_embedding
+
+        subsection_topics_embedding = self.model.get_embedding(subsection_topics_join)
+        semantic_subsection_json["subsection_topics_embedding"] = subsection_topics_embedding
+
+        return semantic_subsection_json
+
+    def create_from_json(self, semantic_subsection_json, ct_document_section):
+
         subsection_title = semantic_subsection_json.get("subsection_title", "")
         subsection_text = semantic_subsection_json.get("subsection_text", "")
         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
         subsection_references = semantic_subsection_json.get("subsection_references", "")
-        subsection_references_join = ','.join(subsection_references)
         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-        subsection_topics_join = ','.join(subsection_topics)
-        subsection_number = subsection_idx
-
-        subtitle_embedding = self.model.get_embedding(subsection_title)
-        subtext_embedding = self.model.get_embedding(subsection_text)
-        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
+        subsection_number = semantic_subsection_json["subsection_number"]
+        subsection_title_embedding = semantic_subsection_json["subsection_title_embedding"]
+        subsection_text_embedding = semantic_subsection_json["subsection_text_embedding"]
+        subsection_content_summary_embedding = semantic_subsection_json["subsection_content_summary_embedding"]
+        subsection_references_embedding = semantic_subsection_json["subsection_references_embedding"]
+        subsection_topics_embedding = semantic_subsection_json["subsection_topics_embedding"]
 
         ct_document_subsection = self.create(
             ct_document_section=ct_document_section,
@@ -299,32 +352,30 @@ class CTDocumentSubsectionManager(models.Manager):
             subsection_references_value=subsection_references,
             subsection_topics_value=subsection_topics,
             subsection_number=subsection_number,
-            title_embedding=subtitle_embedding,
-            text_embedding=subtext_embedding,
-            content_summary_embedding=subcontent_summary_embedding,
-            references_embedding=subreferences_embedding,
-            topics_embedding=subtopics_embedding)
+            title_embedding=subsection_title_embedding,
+            text_embedding=subsection_text_embedding,
+            content_summary_embedding=subsection_content_summary_embedding,
+            references_embedding=subsection_references_embedding,
+            topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
 
 
 class CTDocumentSubsectionTitleManager(models.Manager):
 
-    def create_from_json(self, semantic_subsection_json, subsection_idx, ct_document_subsection):
+    def create_from_json(self, semantic_subsection_json, ct_document_subsection):
+
         subsection_title = semantic_subsection_json.get("subsection_title", "")
         subsection_text = semantic_subsection_json.get("subsection_text", "")
         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
         subsection_references = semantic_subsection_json.get("subsection_references", "")
-        subsection_references_join = ','.join(subsection_references)
         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-        subsection_topics_join = ','.join(subsection_topics)
-        subsection_number = subsection_idx
-
-        subtitle_embedding = self.model.get_embedding(subsection_title)
-        subtext_embedding = self.model.get_embedding(subsection_text)
-        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
+        subsection_number = semantic_subsection_json["subsection_number"]
+        subsection_title_embedding = semantic_subsection_json["subsection_title_embedding"]
+        subsection_text_embedding = semantic_subsection_json["subsection_text_embedding"]
+        subsection_content_summary_embedding = semantic_subsection_json["subsection_content_summary_embedding"]
+        subsection_references_embedding = semantic_subsection_json["subsection_references_embedding"]
+        subsection_topics_embedding = semantic_subsection_json["subsection_topics_embedding"]
 
         ct_document_subsection = self.create(
             ct_document_subsection=ct_document_subsection,
@@ -334,32 +385,29 @@ class CTDocumentSubsectionTitleManager(models.Manager):
             subsection_references=subsection_references,
             subsection_topics=subsection_topics,
             subsection_number=subsection_number,
-            title_embedding=subtitle_embedding,
-            text_embedding=subtext_embedding,
-            content_summary_embedding=subcontent_summary_embedding,
-            references_embedding=subreferences_embedding,
-            topics_embedding=subtopics_embedding)
+            title_embedding=subsection_title_embedding,
+            text_embedding=subsection_text_embedding,
+            content_summary_embedding=subsection_content_summary_embedding,
+            references_embedding=subsection_references_embedding,
+            topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
 
 
 class CTDocumentSubsectionTextManager(models.Manager):
 
-    def create_from_json(self, semantic_subsection_json, subsection_idx, ct_document_subsection):
+    def create_from_json(self, semantic_subsection_json, ct_document_subsection):
         subsection_title = semantic_subsection_json.get("subsection_title", "")
         subsection_text = semantic_subsection_json.get("subsection_text", "")
         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
         subsection_references = semantic_subsection_json.get("subsection_references", "")
-        subsection_references_join = ','.join(subsection_references)
         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-        subsection_topics_join = ','.join(subsection_topics)
-        subsection_number = subsection_idx
-
-        subtitle_embedding = self.model.get_embedding(subsection_title)
-        subtext_embedding = self.model.get_embedding(subsection_text)
-        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
+        subsection_number = semantic_subsection_json["subsection_number"]
+        subsection_title_embedding = semantic_subsection_json["subsection_title_embedding"]
+        subsection_text_embedding = semantic_subsection_json["subsection_text_embedding"]
+        subsection_content_summary_embedding = semantic_subsection_json["subsection_content_summary_embedding"]
+        subsection_references_embedding = semantic_subsection_json["subsection_references_embedding"]
+        subsection_topics_embedding = semantic_subsection_json["subsection_topics_embedding"]
 
         ct_document_subsection = self.create(
             ct_document_subsection=ct_document_subsection,
@@ -369,31 +417,28 @@ class CTDocumentSubsectionTextManager(models.Manager):
             subsection_references=subsection_references,
             subsection_topics=subsection_topics,
             subsection_number=subsection_number,
-            title_embedding=subtitle_embedding,
-            text_embedding=subtext_embedding,
-            content_summary_embedding=subcontent_summary_embedding,
-            references_embedding=subreferences_embedding,
-            topics_embedding=subtopics_embedding)
+            title_embedding=subsection_title_embedding,
+            text_embedding=subsection_text_embedding,
+            content_summary_embedding=subsection_content_summary_embedding,
+            references_embedding=subsection_references_embedding,
+            topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
 
 class CTDocumentSubsectionReferencesManager(models.Manager):
 
-    def create_from_json(self, semantic_subsection_json, subsection_idx, ct_document_subsection):
+    def create_from_json(self, semantic_subsection_json, ct_document_subsection):
         subsection_title = semantic_subsection_json.get("subsection_title", "")
         subsection_text = semantic_subsection_json.get("subsection_text", "")
         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
         subsection_references = semantic_subsection_json.get("subsection_references", "")
-        subsection_references_join = ','.join(subsection_references)
         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-        subsection_topics_join = ','.join(subsection_topics)
-        subsection_number = subsection_idx
-
-        subtitle_embedding = self.model.get_embedding(subsection_title)
-        subtext_embedding = self.model.get_embedding(subsection_text)
-        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
+        subsection_number = semantic_subsection_json["subsection_number"]
+        subsection_title_embedding = semantic_subsection_json["subsection_title_embedding"]
+        subsection_text_embedding = semantic_subsection_json["subsection_text_embedding"]
+        subsection_content_summary_embedding = semantic_subsection_json["subsection_content_summary_embedding"]
+        subsection_references_embedding = semantic_subsection_json["subsection_references_embedding"]
+        subsection_topics_embedding = semantic_subsection_json["subsection_topics_embedding"]
 
         ct_document_subsection = self.create(
             ct_document_subsection=ct_document_subsection,
@@ -403,32 +448,29 @@ class CTDocumentSubsectionReferencesManager(models.Manager):
             subsection_references=subsection_references,
             subsection_topics=subsection_topics,
             subsection_number=subsection_number,
-            title_embedding=subtitle_embedding,
-            text_embedding=subtext_embedding,
-            content_summary_embedding=subcontent_summary_embedding,
-            references_embedding=subreferences_embedding,
-            topics_embedding=subtopics_embedding)
+            title_embedding=subsection_title_embedding,
+            text_embedding=subsection_text_embedding,
+            content_summary_embedding=subsection_content_summary_embedding,
+            references_embedding=subsection_references_embedding,
+            topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
 
 
 class CTDocumentSubsectionTopicsManager(models.Manager):
 
-    def create_from_json(self, semantic_subsection_json, subsection_idx, ct_document_subsection):
+    def create_from_json(self, semantic_subsection_json, ct_document_subsection):
         subsection_title = semantic_subsection_json.get("subsection_title", "")
         subsection_text = semantic_subsection_json.get("subsection_text", "")
         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
         subsection_references = semantic_subsection_json.get("subsection_references", "")
-        subsection_references_join = ','.join(subsection_references)
         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
-        subsection_topics_join = ','.join(subsection_topics)
-        subsection_number = subsection_idx
-
-        subtitle_embedding = self.model.get_embedding(subsection_title)
-        subtext_embedding = self.model.get_embedding(subsection_text)
-        subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-        subreferences_embedding = self.model.get_embedding(subsection_references_join)
-        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
+        subsection_number = semantic_subsection_json["subsection_number"]
+        subsection_title_embedding = semantic_subsection_json["subsection_title_embedding"]
+        subsection_text_embedding = semantic_subsection_json["subsection_text_embedding"]
+        subsection_content_summary_embedding = semantic_subsection_json["subsection_content_summary_embedding"]
+        subsection_references_embedding = semantic_subsection_json["subsection_references_embedding"]
+        subsection_topics_embedding = semantic_subsection_json["subsection_topics_embedding"]
 
         ct_document_subsection = self.create(
             ct_document_subsection=ct_document_subsection,
@@ -438,10 +480,10 @@ class CTDocumentSubsectionTopicsManager(models.Manager):
             subsection_references=subsection_references,
             subsection_topics=subsection_topics,
             subsection_number=subsection_number,
-            title_embedding=subtitle_embedding,
-            text_embedding=subtext_embedding,
-            content_summary_embedding=subcontent_summary_embedding,
-            references_embedding=subreferences_embedding,
-            topics_embedding=subtopics_embedding)
+            title_embedding=subsection_title_embedding,
+            text_embedding=subsection_text_embedding,
+            content_summary_embedding=subsection_content_summary_embedding,
+            references_embedding=subsection_references_embedding,
+            topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
