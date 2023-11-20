@@ -203,7 +203,9 @@ class VectorizeDocumentsEngine:
                     section_text = semantic_section_json.get("section_text","")
                     section_content_summary = semantic_section_json.get("section_content_summary","")
                     section_references = semantic_section_json.get("section_references","")
+                    section_references_join = ','.join(section_references)
                     section_topics = semantic_section_json.get("section_topics","")
+                    section_topics_join = ','.join(section_topics)
                     section_number = i
 
                     # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
@@ -211,8 +213,8 @@ class VectorizeDocumentsEngine:
                     title_embedding = self.model.get_embedding(section_title)
                     text_embedding = self.model.get_embedding(section_text)
                     content_summary_embedding = self.model.get_embedding(section_content_summary)
-                    references_embedding = self.model.get_embedding(','.join(section_references))
-                    topics_embedding = self.model.get_embedding(','.join(section_topics))
+                    references_embedding = self.model.get_embedding(section_references_join)
+                    topics_embedding = self.model.get_embedding(section_topics_join)
 
                     ct_document_section = CTDocumentSection.objects.create(
                         ct_document=ct_document,
@@ -237,7 +239,9 @@ class VectorizeDocumentsEngine:
                         subsection_text = semantic_subsection_json.get("subsection_text", "")
                         subsection_content_summary = semantic_subsection_json.get("subsection_content_summary", "")
                         subsection_references = semantic_subsection_json.get("subsection_references", "")
+                        subsection_references_join = ','.join(subsection_references)
                         subsection_topics = semantic_subsection_json.get("subsection_topics", "")
+                        subsection_topics_join = ','.join(subsection_topics)
                         subsection_number = j
 
                         # 'title_embedding', 'text_embedding', 'content_summary_embedding', 'references_embedding', 'topics_embedding'
@@ -245,8 +249,8 @@ class VectorizeDocumentsEngine:
                         subtitle_embedding = self.model.get_embedding(subsection_title)
                         subtext_embedding = self.model.get_embedding(subsection_text)
                         subcontent_summary_embedding = self.model.get_embedding(subsection_content_summary)
-                        subreferences_embedding = self.model.get_embedding(','.join(subsection_references))
-                        subtopics_embedding = self.model.get_embedding(','.join(subsection_topics))
+                        subreferences_embedding = self.model.get_embedding(subsection_references_join)
+                        subtopics_embedding = self.model.get_embedding(subsection_topics_join)
 
                         CTDocumentSubsection.objects.create(
                             ct_document_section=ct_document_section,

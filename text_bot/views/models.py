@@ -117,9 +117,6 @@ class CTDocumentSplit(models.Model):
     objects = CTDocumentSplitManager()
 
 
-# extract topics, extract keywords, extract possible questions
-# Counter Hypothetical Document Embeddings (HyDE)
-# CREATE QUESTIONS FOR CONTEXT
 class CTDocumentSection(models.Model):
     class Meta:
         ordering = ['-id']
@@ -132,16 +129,6 @@ class CTDocumentSection(models.Model):
                 opclasses=['vector_l2_ops']
             )
         ]
-
-    # find split with main context
-    # find semantically connected splits
-    # is this split related to previous split context
-    # is next split related to this slit content
-    # what is this split related to in bigger context
-    # pick up all splits related with bigger context
-
-    # main context split
-    # semantically connected splits
 
     ct_document = models.ForeignKey(CTDocument, on_delete=models.CASCADE, related_name='document_sections')
     document_title = models.CharField(max_length=100)
@@ -179,9 +166,6 @@ class CTDocumentSectionTitle(models.Model):
         ]
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_title')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     section_title = models.CharField(max_length=100)
     section_text = models.CharField(max_length=1500)
@@ -213,9 +197,6 @@ class CTDocumentSectionText(models.Model):
         ]
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_text')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     section_title = models.CharField(max_length=100)
     section_text = models.CharField(max_length=1500)
@@ -247,9 +228,6 @@ class CTDocumentSectionReferences(models.Model):
         ]
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_references')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     section_title = models.CharField(max_length=100)
     section_text = models.CharField(max_length=1500)
@@ -281,9 +259,6 @@ class CTDocumentSectionTopics(models.Model):
         ]
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_topics')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     section_title = models.CharField(max_length=100)
     section_text = models.CharField(max_length=1500)
@@ -317,9 +292,6 @@ class CTDocumentSubsection(models.Model):
         ]
 
     ct_document_section = models.ForeignKey(CTDocumentSection, on_delete=models.CASCADE, related_name='section_subsections')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     subsection_title = models.CharField(max_length=100)
     subsection_text = models.CharField(max_length=1500)
@@ -353,9 +325,6 @@ class CTDocumentSubsectionTitle(models.Model):
 
     ct_document_subsection = models.ForeignKey(CTDocumentSubsection, on_delete=models.CASCADE,
                                             related_name='subsection_title')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     subsection_title = models.CharField(max_length=100)
     subsection_text = models.CharField(max_length=1500)
@@ -388,9 +357,6 @@ class CTDocumentSubsectionText(models.Model):
 
     ct_document_subsection = models.ForeignKey(CTDocumentSubsection, on_delete=models.CASCADE,
                                                related_name='subsection_text')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     subsection_title = models.CharField(max_length=100)
     subsection_text = models.CharField(max_length=1500)
@@ -423,9 +389,6 @@ class CTDocumentSubsectionReferences(models.Model):
 
     ct_document_subsection = models.ForeignKey(CTDocumentSubsection, on_delete=models.CASCADE,
                                                related_name='subsection_references')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     subsection_title = models.CharField(max_length=100)
     subsection_text = models.CharField(max_length=1500)
@@ -458,9 +421,6 @@ class CTDocumentSubsectionTopics(models.Model):
 
     ct_document_subsection = models.ForeignKey(CTDocumentSubsection, on_delete=models.CASCADE,
                                                related_name='subsection_topics')
-    document_title = models.CharField(max_length=100)
-    document_filename = models.CharField(max_length=100)
-    document_page = models.IntegerField()
 
     subsection_title = models.CharField(max_length=100)
     subsection_text = models.CharField(max_length=1500)
