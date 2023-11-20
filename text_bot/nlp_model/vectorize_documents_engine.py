@@ -187,24 +187,26 @@ class VectorizeDocumentsEngine:
 
                 previous_last_semantic_chunk = semantic_sections_json_list[-1].get("subsection_list", [])[-1]
 
-                for i, semantic_section_json in enumerate(semantic_sections_json_list):
+                for i, raw_semantic_section_json in enumerate(semantic_sections_json_list):
                     print("semantic_section_json: ", str(semantic_section_json))
 
                     semantic_subsections_json_list = semantic_section_json.get("subsection_list",[])
 
-                    ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, i, ct_document, document_page)
-                    ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, i, ct_document_section)
-                    ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, i, ct_document_section)
-                    ct_document_section_references = CTDocumentSectionReferences.objects.create_from_json(semantic_section_json, i, ct_document_section)
-                    ct_document_section_topics = CTDocumentSectionTopics.objects.create_from_json(semantic_section_json, i, ct_document_section)
+                    semantic_section_json = CTDocumentSection.objects.prepare_json(raw_semantic_section_json, i)
+                    ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
+                    ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, ct_document_section)
+                    ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, ct_document_section)
+                    ct_document_section_references = CTDocumentSectionReferences.objects.create_from_json(semantic_section_json, ct_document_section)
+                    ct_document_section_topics = CTDocumentSectionTopics.objects.create_from_json(semantic_section_json, ct_document_section)
 
-                    for j, semantic_subsection_json in enumerate(semantic_subsections_json_list):
+                    for j, raw_semantic_subsection_json in enumerate(semantic_subsections_json_list):
 
-                        ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, j, ct_document_section)
-                        ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
-                        ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
-                        ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
-                        ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, j, ct_document_subsection)
+                        semantic_subsection_json = CTDocumentSubsection.objects.prepare_json(raw_semantic_subsection_json, j)
+                        ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, ct_document_section)
+                        ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                        ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                        ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                        ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
 
 
 
