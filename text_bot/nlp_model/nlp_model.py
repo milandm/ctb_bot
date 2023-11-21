@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Iterable, Type, Union, Callable, Optional, Generator, Any
-from openai.openai_object import OpenAIObject
 from numpy import ndarray
 
 class NlpModel(ABC):
@@ -13,9 +12,9 @@ class NlpModel(ABC):
         pass
 
     @abstractmethod
-    def get_embedding(self, text:str) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
+    def get_embedding(self, text:str):
         pass
 
     @abstractmethod
-    def send_prompt( self, system_msg:str, user_prompt:str ) -> Union[Generator[Union[list, OpenAIObject, dict], Any, None], list, OpenAIObject, dict]:
+    def send_prompt( self, system_msg:str, user_prompt:str ):
         pass

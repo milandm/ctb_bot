@@ -35,7 +35,7 @@ class PromptCreator:
     def get_document_title(self, first_documents_split_txt: str):
         title_extract_prompt = self.prompt_template_creator.get_title_extract_prompt(first_documents_split_txt)
         document_title_openai_response = self.model.send_prompt(SYSTEM_MSG_TITLE, title_extract_prompt)
-        document_title_content = document_title_openai_response.get("choices")[0].get("message").get("content")
+        document_title_content = document_title_openai_response.choices[0].message.content
         document_title = extract_single_value_openai_content(document_title_content, TITLE_EXTRACT_KEY)
         return document_title
 

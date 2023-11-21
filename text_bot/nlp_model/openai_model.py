@@ -52,7 +52,7 @@ class OpenaiModel(NlpModel):
 
 
     def send_prompt( self, system_msg:str, user_prompt:str ):
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             # model="gpt-3.5-turbo",
             model=LLM_MODEL,
             messages=[{"role": "system", "content": system_msg},
