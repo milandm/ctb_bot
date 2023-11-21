@@ -1,64 +1,6 @@
-import sys
-import os
-from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import Docx2txtLoader
-from langchain.document_loaders import TextLoader
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-# from langchain.text_splitter import MarkdownHeaderTextSplitter
-# "/content/drive/My Drive/kodi_bot"
-from text_bot.views.models import CTDocumentSplit
-
-
-import sys
-import os
-from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import Docx2txtLoader
-from langchain.document_loaders import TextLoader
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-# from langchain.text_splitter import MarkdownHeaderTextSplitter
-from langchain.prompts import PromptTemplate
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.retrievers.document_compressors import (
-    DocumentCompressorPipeline,
-    EmbeddingsFilter,
-)
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.chains import RetrievalQAWithSourcesChain, MapReduceDocumentsChain, StuffDocumentsChain
-from langchain.prompts import PromptTemplate
-
-from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain
-
-from langchain.chains.summarize import load_summarize_chain
-
-from langchain.chains import (
-LLMBashChain,
-LLMChain,
-RetrievalQA,
-SimpleSequentialChain
-)
-
-
-
-
-
-
 import re
 import base64
 import json
-from string import Template
-from collections import defaultdict
 import os
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import Docx2txtLoader
