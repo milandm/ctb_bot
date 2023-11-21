@@ -90,8 +90,7 @@ class PromptCreator:
         semantic_text_chunk_openai_response = self.model.send_prompt(DOCUMENT_SYSTEM_MSG_SEMANTIC_TEXT_CHUNKING_V1,
                                                                       semantic_text_chunks_prompt)
         print(str(semantic_text_chunk_openai_response))
-        semantic_text_chunks_content = semantic_text_chunk_openai_response.get("choices")[0].get("message").get(
-            "content")
+        semantic_text_chunks_content = semantic_text_chunk_openai_response.choices[0].message.content
 
         semantic_text_chunks_content_json_list = extract_clean_json_data(semantic_text_chunks_content)
         return semantic_text_chunks_content_json_list
