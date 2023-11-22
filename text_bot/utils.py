@@ -6,7 +6,24 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import Docx2txtLoader
 from langchain.document_loaders import TextLoader
 from pathlib import Path
+import time
+import functools
 
+def retry(max_retries=3, delay=1, backoff=2, exceptions=(Exception,)):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = max_retries
+            while retries > 1:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    time.sleep(delay)
+                    delay *= backoff
+                    retries -= 1
+            return func(*args, **kwargs)  # Last attempt
+        return wrapper
+    return decorator
 
 def extract_json_data(input_string):
     # Regular expression pattern to extract JSON data

@@ -72,11 +72,13 @@ class VectorizeDocumentsEngine:
         documents = load_documents("documents/")
         for document_pages in documents:
 
-            document_pages_formatted = self.get_document_split_pages(document_pages)
-            documents_splits = self.semantic_text_splitter.split_documents(document_pages_formatted)
+            document_page_formatted_list = self.get_document_split_pages(document_pages)
 
-            self.add_document_pages(document_pages_formatted)
-            self.add_semantic_document_splits(documents_splits)
+            for i, document_page_formatted in enumerate(document_page_formatted_list):
+                if not self.page_already_added_to_db(document_page_formatted, i):
+                    documents_splits = self.semantic_text_splitter.split_documents([document_page_formatted])
+                    self.add_semantic_document_splits(documents_splits)
+                    self.add_document_pages(document_page_formatted)
 
     def splits_already_added_to_db(self, ct_document, documents_splits):
         old_document_splits = ct_document.document_splits.all()
@@ -99,8 +101,8 @@ class VectorizeDocumentsEngine:
         return document_pages
 
 
-    def get_document(self, documents_splits):
-        document_filename = documents_splits[0].metadata.get("source", "")
+    def get_document(self, documents_split):
+        document_filename = documents_split.metadata.get("source", "")
 
         ct_document = None
         try:
@@ -109,7 +111,7 @@ class VectorizeDocumentsEngine:
             print(e)
 
         if not ct_document:
-            ct_document = self.create_new_document(documents_splits)
+            ct_document = self.create_new_document(documents_split)
         return ct_document
 
 
@@ -128,7 +130,7 @@ class VectorizeDocumentsEngine:
         return ct_document
 
     def add_document_pages(self, document_pages):
-        ct_document = self.get_document(document_pages)
+        ct_document = self.get_document(document_pages[0])
         if not self.pages_already_added_to_db(ct_document, document_pages):
             ct_document.document_pages.all().delete()
             for i, document_page in enumerate(document_pages):
@@ -142,8 +144,13 @@ class VectorizeDocumentsEngine:
         old_document_pages = ct_document.document_pages.all()
         return len(old_document_pages) >= len(document_pages)
 
+    def page_already_added_to_db(self, document_page, pages_index):
+        ct_document = self.get_document(document_page)
+        old_document_pages = ct_document.document_pages.all()
+        return len(old_document_pages) > pages_index
+
     def add_document_splits(self, documents_splits):
-        ct_document = self.get_document(documents_splits)
+        ct_document = self.get_document(documents_splits[0])
         if not self.splits_already_added_to_db(ct_document, documents_splits):
             ct_document.document_splits.all().delete()
             for i, documents_split in enumerate(documents_splits):
@@ -170,9 +177,9 @@ class VectorizeDocumentsEngine:
                     embedding=embedding)
 
     def add_semantic_document_splits(self, documents_splits):
-        ct_document = self.get_document(documents_splits)
+        ct_document = self.get_document(documents_splits[0])
         if not self.splits_already_added_to_db(ct_document, documents_splits):
-            ct_document.document_splits.all().delete()
+            # ct_document.document_sections.all().delete()
 
             previous_last_semantic_chunk = ""
             for i, documents_split in enumerate(documents_splits):

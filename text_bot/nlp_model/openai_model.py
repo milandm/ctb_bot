@@ -11,6 +11,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from typing import List, Callable
 import numpy as np
+from text_bot.utils import retry
 
 
 
@@ -50,8 +51,9 @@ class OpenaiModel(NlpModel):
     def get_embedding(self, text):
         return self.open_ai_embeddings.embed_query(text)
 
-
+    @retry(max_retries=3, delay=1, backoff=2)
     def send_prompt( self, system_msg:str, user_prompt:str ):
+
         response = openai.chat.completions.create(
             # model="gpt-3.5-turbo",
             model=LLM_MODEL,
