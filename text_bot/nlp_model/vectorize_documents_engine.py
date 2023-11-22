@@ -65,7 +65,7 @@ class VectorizeDocumentsEngine:
             md_header_splits = self.markdown_splitter.split_text(document_pages_formatted)
             documents_splits = self.text_splitter.split_documents(md_header_splits)
 
-            self.add_document_pages(document_pages_formatted)
+            self.add_document_page(document_pages_formatted)
             self.add_document_splits(documents_splits)
 
     def load_semantic_document_chunks_to_db(self):
@@ -78,11 +78,11 @@ class VectorizeDocumentsEngine:
                 if not self.page_already_added_to_db(document_page_formatted, i):
                     documents_splits = self.semantic_text_splitter.split_documents([document_page_formatted])
                     self.add_semantic_document_splits(documents_splits)
-                    self.add_document_pages(document_page_formatted)
+                    self.add_document_page(document_page_formatted)
 
     def splits_already_added_to_db(self, ct_document, documents_splits):
-        old_document_splits = ct_document.document_splits.all()
-        return len(old_document_splits) >= len(documents_splits)
+        old_document_splits_count = ct_document.document_splits.all().count()
+        return old_document_splits_count >= len(documents_splits)
 
     def get_text_compression(self, documents_split_txt):
         text_split_compression = self.prompt_creator.get_document_text_compression(documents_split_txt)
@@ -115,9 +115,9 @@ class VectorizeDocumentsEngine:
         return ct_document
 
 
-    def create_new_document(self, documents_splits):
-        document_title = self.prompt_creator.get_document_title(documents_splits[0].page_content)
-        document_filename = documents_splits[0].metadata.get("source", "")
+    def create_new_document(self, documents_split):
+        document_title = self.prompt_creator.get_document_title(documents_split.page_content)
+        document_filename = documents_split.metadata.get("source", "")
 
         print("Document title: ", document_title)
         print("Document filename: ", document_filename)
@@ -129,25 +129,25 @@ class VectorizeDocumentsEngine:
 
         return ct_document
 
-    def add_document_pages(self, document_pages):
-        ct_document = self.get_document(document_pages[0])
-        if not self.pages_already_added_to_db(ct_document, document_pages):
-            ct_document.document_pages.all().delete()
-            for i, document_page in enumerate(document_pages):
-                print("Document page content: ", document_page.page_content)
-                CTDocumentPage.objects.create(
-                    ct_document=ct_document,
-                    document_page_text=document_page.page_content,
-                    document_page_number=i)
+    def add_document_page(self, document_page, pages_index=0):
+        ct_document = self.get_document(document_page)
+        if not self.page_already_added_to_document(ct_document, pages_index):
+            # ct_document.document_pages.all().delete()
+            # for i, document_page in enumerate(document_page):
+            print("Document page content: ", document_page.page_content)
+            CTDocumentPage.objects.create(
+                ct_document=ct_document,
+                document_page_text=document_page.page_content,
+                document_page_number=pages_index)
 
-    def pages_already_added_to_db(self, ct_document, document_pages):
-        old_document_pages = ct_document.document_pages.all()
-        return len(old_document_pages) >= len(document_pages)
+    def page_already_added_to_document(self, ct_document, pages_index):
+        old_document_pages_count = ct_document.document_pages.all().count()
+        return old_document_pages_count > pages_index
 
     def page_already_added_to_db(self, document_page, pages_index):
         ct_document = self.get_document(document_page)
-        old_document_pages = ct_document.document_pages.all()
-        return len(old_document_pages) > pages_index
+        old_document_pages_count = ct_document.document_pages.all().count()
+        return old_document_pages_count > pages_index
 
     def add_document_splits(self, documents_splits):
         ct_document = self.get_document(documents_splits[0])
@@ -179,7 +179,7 @@ class VectorizeDocumentsEngine:
     def add_semantic_document_splits(self, documents_splits):
         ct_document = self.get_document(documents_splits[0])
         if not self.splits_already_added_to_db(ct_document, documents_splits):
-            # ct_document.document_sections.all().delete()
+            ct_document.document_sections.all().delete()
 
             previous_last_semantic_chunk = ""
             for i, documents_split in enumerate(documents_splits):
@@ -215,7 +215,6 @@ class VectorizeDocumentsEngine:
                         ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
                         ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
                         ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
-
 
 
 
