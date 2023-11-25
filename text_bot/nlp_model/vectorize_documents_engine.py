@@ -178,12 +178,13 @@ class VectorizeDocumentsEngine:
 
     def add_semantic_document_splits(self, documents_splits):
         ct_document = self.get_document(documents_splits[0])
+        document_page = documents_splits[0].metadata.get("page", 0)
         if not self.splits_already_added_to_db(ct_document, documents_splits):
-            ct_document.document_sections.all().delete()
+            ct_document.document_sections.filter(document_page=document_page).all().delete()
 
             previous_last_semantic_chunk = ""
             for i, documents_split in enumerate(documents_splits):
-                document_page = documents_split.metadata.get("page", 0)
+                # document_page = documents_split.metadata.get("page", 0)
                 split_text = documents_split.page_content
 
                 semantic_sections_json_list = self.prompt_creator.get_document_semantic_text_chunks(split_text,
