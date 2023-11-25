@@ -9,11 +9,12 @@ from pathlib import Path
 import time
 import functools
 
-def retry(max_retries=3, delay=1, backoff=2, exceptions=(Exception,)):
+def retry(max_retries=3, initial_delay=1, backoff=2, exceptions=(Exception,)):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             retries = max_retries
+            delay = initial_delay
             while retries > 1:
                 try:
                     return func(*args, **kwargs)

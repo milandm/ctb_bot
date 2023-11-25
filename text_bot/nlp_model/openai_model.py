@@ -51,7 +51,7 @@ class OpenaiModel(NlpModel):
     def get_embedding(self, text):
         return self.open_ai_embeddings.embed_query(text)
 
-    @retry(max_retries=3, delay=1, backoff=2)
+    @retry(max_retries=3, initial_delay=1, backoff=2)
     def send_prompt( self, system_msg:str, user_prompt:str ):
 
         response = openai.chat.completions.create(
