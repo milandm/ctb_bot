@@ -84,6 +84,10 @@ class VectorizeDocumentsEngine:
         old_document_splits_count = ct_document.document_splits.all().count()
         return old_document_splits_count >= len(documents_splits)
 
+    def page_index_already_added_to_db(self, ct_document, documents_page_index):
+        old_document_pages_count = ct_document.document_pages.all().count()
+        return old_document_pages_count > documents_page_index
+
     def get_text_compression(self, documents_split_txt):
         text_split_compression = self.prompt_creator.get_document_text_compression(documents_split_txt)
         text_split_compression_check = self.prompt_creator.get_document_text_compression_check(documents_split_txt, text_split_compression)
@@ -178,44 +182,44 @@ class VectorizeDocumentsEngine:
 
     def add_semantic_document_splits(self, documents_splits):
         ct_document = self.get_document(documents_splits[0])
+
         document_page = documents_splits[0].metadata.get("page", 0)
-        if not self.splits_already_added_to_db(ct_document, documents_splits):
-            ct_document.document_sections.filter(document_page=document_page).all().delete()
+        ct_document.document_sections.filter(document_page=document_page).all().delete()
 
-            previous_last_semantic_chunk = ""
-            for i, documents_split in enumerate(documents_splits):
-                # document_page = documents_split.metadata.get("page", 0)
-                split_text = documents_split.page_content
+        previous_last_semantic_chunk = ""
+        for i, documents_split in enumerate(documents_splits):
+            # document_page = documents_split.metadata.get("page", 0)
+            split_text = documents_split.page_content
 
-                semantic_sections_json_list = self.prompt_creator.get_document_semantic_text_chunks(split_text,
-                                                                                                  previous_last_semantic_chunk)
+            semantic_sections_json_list = self.prompt_creator.get_document_semantic_text_chunks(split_text,
+                                                                                              previous_last_semantic_chunk)
 
-                if not semantic_sections_json_list:
-                    continue
-                previous_last_subsections_list = semantic_sections_json_list[-1].get("subsection_list", [])
-                if previous_last_subsections_list:
-                    previous_last_semantic_chunk = previous_last_subsections_list[-1].get("subsection_text", "")
+            if not semantic_sections_json_list:
+                continue
+            previous_last_subsections_list = semantic_sections_json_list[-1].get("subsection_list", [])
+            if previous_last_subsections_list:
+                previous_last_semantic_chunk = previous_last_subsections_list[-1].get("subsection_text", "")
 
-                for i, raw_semantic_section_json in enumerate(semantic_sections_json_list):
-                    print("semantic_section_json: ", str(raw_semantic_section_json))
+            for i, raw_semantic_section_json in enumerate(semantic_sections_json_list):
+                print("semantic_section_json: ", str(raw_semantic_section_json))
 
-                    semantic_subsections_json_list = raw_semantic_section_json.get("subsection_list",[])
+                semantic_subsections_json_list = raw_semantic_section_json.get("subsection_list",[])
 
-                    semantic_section_json = self.prepare_semantic_section_json(raw_semantic_section_json, i)
-                    ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
-                    ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, ct_document_section)
-                    ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, ct_document_section)
-                    ct_document_section_references = CTDocumentSectionReferences.objects.create_from_json(semantic_section_json, ct_document_section)
-                    ct_document_section_topics = CTDocumentSectionTopics.objects.create_from_json(semantic_section_json, ct_document_section)
+                semantic_section_json = self.prepare_semantic_section_json(raw_semantic_section_json, i)
+                ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
+                ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, ct_document_section)
+                ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, ct_document_section)
+                ct_document_section_references = CTDocumentSectionReferences.objects.create_from_json(semantic_section_json, ct_document_section)
+                ct_document_section_topics = CTDocumentSectionTopics.objects.create_from_json(semantic_section_json, ct_document_section)
 
-                    for j, raw_semantic_subsection_json in enumerate(semantic_subsections_json_list):
+                for j, raw_semantic_subsection_json in enumerate(semantic_subsections_json_list):
 
-                        semantic_subsection_json = self.prepare_semantic_subsection_json(raw_semantic_subsection_json, j)
-                        ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, ct_document_section)
-                        ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
-                        ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
-                        ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
-                        ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                    semantic_subsection_json = self.prepare_semantic_subsection_json(raw_semantic_subsection_json, j)
+                    ct_document_subsection = CTDocumentSubsection.objects.create_from_json(semantic_subsection_json, ct_document_section)
+                    ct_document_subsection_title = CTDocumentSubsectionTitle.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                    ct_document_subsection_text = CTDocumentSubsectionText.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                    ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
+                    ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
 
 
 
