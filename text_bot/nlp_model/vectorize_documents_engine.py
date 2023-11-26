@@ -75,9 +75,10 @@ class VectorizeDocumentsEngine:
             document_page_formatted_list = self.get_document_split_pages(document_pages)
 
             for i, document_page_formatted in enumerate(document_page_formatted_list):
+                previous_last_semantic_chunk = ""
                 if not self.page_already_added_to_db(document_page_formatted, i):
                     documents_splits = self.semantic_text_splitter.split_documents([document_page_formatted])
-                    self.add_semantic_document_splits(documents_splits)
+                    previous_last_semantic_chunk = self.add_semantic_document_splits(documents_splits, previous_last_semantic_chunk)
                     self.add_document_page(document_page_formatted)
 
     def splits_already_added_to_db(self, ct_document, documents_splits):
@@ -180,13 +181,15 @@ class VectorizeDocumentsEngine:
                     split_number=i,
                     embedding=embedding)
 
-    def add_semantic_document_splits(self, documents_splits):
+    # previous_last_semantic_chunk should be move on document level
+    def add_semantic_document_splits(self, documents_splits, previous_last_semantic_chunk = ""):
         ct_document = self.get_document(documents_splits[0])
 
         document_page = documents_splits[0].metadata.get("page", 0)
         ct_document.document_sections.filter(document_page=document_page).all().delete()
 
-        previous_last_semantic_chunk = ""
+        section_index = 0
+
         for i, documents_split in enumerate(documents_splits):
             # document_page = documents_split.metadata.get("page", 0)
             split_text = documents_split.page_content
@@ -205,7 +208,7 @@ class VectorizeDocumentsEngine:
 
                 semantic_subsections_json_list = raw_semantic_section_json.get("subsection_list",[])
 
-                semantic_section_json = self.prepare_semantic_section_json(raw_semantic_section_json, i)
+                semantic_section_json = self.prepare_semantic_section_json(raw_semantic_section_json, section_index)
                 ct_document_section = CTDocumentSection.objects.create_from_json(semantic_section_json, ct_document, document_page)
                 ct_document_section_title = CTDocumentSectionTitle.objects.create_from_json(semantic_section_json, ct_document_section)
                 ct_document_section_text = CTDocumentSectionText.objects.create_from_json(semantic_section_json, ct_document_section)
@@ -221,6 +224,9 @@ class VectorizeDocumentsEngine:
                     ct_document_subsection_references = CTDocumentSubsectionReferences.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
                     ct_document_subsection_topics = CTDocumentSubsectionTopics.objects.create_from_json(semantic_subsection_json, ct_document_subsection)
 
+                section_index+=1
+
+        return previous_last_semantic_chunk
 
 
     def prepare_semantic_section_json(self, semantic_section_json, section_idx):
