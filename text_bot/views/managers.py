@@ -96,7 +96,7 @@ class CTDocumentSectionManager(models.Manager):
     # }]
     # """
 
-    def create_from_json(self, semantic_section_json, ct_document, document_page):
+    def create_from_json(self, semantic_section_json, ct_document, document_page_idx):
 
         section_title = semantic_section_json.get("section_title", "")
         section_text = semantic_section_json.get("section_text", "")
@@ -114,7 +114,7 @@ class CTDocumentSectionManager(models.Manager):
             ct_document=ct_document,
             document_title=ct_document.document_title,
             document_filename=ct_document.document_filename,
-            document_page=document_page,
+            document_page=document_page_idx,
             section_title_value = section_title,
             section_text_value = section_text,
             section_content_summary_value = section_content_summary,
