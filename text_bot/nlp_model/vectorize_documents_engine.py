@@ -79,7 +79,7 @@ class VectorizeDocumentsEngine:
                 if not self.page_already_added_to_db(document_page_formatted, document_page_idx):
                     documents_splits = self.semantic_text_splitter.split_documents([document_page_formatted])
                     previous_last_semantic_chunk = self.add_semantic_document_splits(documents_splits, previous_last_semantic_chunk, document_page_idx)
-                    self.add_document_page(document_page_formatted)
+                    self.add_document_page(document_page_formatted, document_page_idx)
 
     def splits_already_added_to_db(self, ct_document, documents_splits):
         old_document_splits_count = ct_document.document_splits.all().count()
@@ -134,7 +134,7 @@ class VectorizeDocumentsEngine:
 
         return ct_document
 
-    def add_document_page(self, document_page, pages_index=0):
+    def add_document_page(self, document_page, pages_index):
         ct_document = self.get_document(document_page)
         if not self.page_already_added_to_document(ct_document, pages_index):
             # ct_document.document_pages.all().delete()
@@ -181,7 +181,6 @@ class VectorizeDocumentsEngine:
                     split_number=i,
                     embedding=embedding)
 
-    # previous_last_semantic_chunk should be move on document level
     def add_semantic_document_splits(self, documents_splits, previous_last_semantic_chunk = "", document_page_idx = 0):
         ct_document = self.get_document(documents_splits[0])
 
@@ -196,8 +195,9 @@ class VectorizeDocumentsEngine:
             semantic_sections_json_list = self.prompt_creator.get_document_semantic_text_chunks(split_text,
                                                                                               previous_last_semantic_chunk)
 
-            if not semantic_sections_json_list:
+            if not semantic_sections_json_list or not isinstance(semantic_sections_json_list, list):
                 continue
+
             previous_last_subsections_list = semantic_sections_json_list[-1].get("subsection_list", [])
             if previous_last_subsections_list:
                 previous_last_semantic_chunk = previous_last_subsections_list[-1].get("subsection_text", "")
