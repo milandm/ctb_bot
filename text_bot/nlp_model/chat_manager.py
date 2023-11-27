@@ -102,7 +102,8 @@ class ChatManager:
             question_related_info = self.prompt_creator.get_question_related_informations(current_query, section_text)
             question_related_info_list.append(question_related_info)
 
-        return (', ').join(question_related_info_list)
+        json_data = json.dumps(question_related_info_list)
+        return json_data
         # documents_list = list(documents)
         # doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
 
