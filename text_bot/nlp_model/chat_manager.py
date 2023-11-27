@@ -95,7 +95,7 @@ class ChatManager:
             for section in section_full_texts:
                 sections_dict[section.ct_document_section.ct_document.id] = section.section_text
             for subsection in subsection_full_texts:
-                sections_dict[subsection.ct_document_subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
+                sections_dict[subsection.ct_document_subsection.ct_document_section.ct_document.id] = subsection.ct_document_subsection.ct_document_section.section_text_value
 
         question_related_info_list = list()
         for key, section_text in sections_dict.items():
