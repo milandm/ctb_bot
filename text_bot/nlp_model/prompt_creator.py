@@ -75,8 +75,7 @@ class PromptCreator:
             self.model.send_prompt(DOCUMENT_SYSTEM_MSG_QUESTION_RELATED_INFORMATION_V1, question_related_information_prompt)
         print(str(question_related_information_openai_response))
         question_related_information_content = question_related_information_openai_response.choices[0].message.content
-        question_related_information = extract_clean_json_data(question_related_information_content)
-        return question_related_information
+        return question_related_information_content
 
 
     def clean_documents_split(self, documents_split_txt):
