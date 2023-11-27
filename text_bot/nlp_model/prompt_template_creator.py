@@ -593,6 +593,15 @@ SECTION_TEXT: $section_text
 From given SECTION_TEXT extract ALL!!! information relevant for given QUESTION.
     1. It is mandatory to keep any related enlisted items!!!
     2. Highest priority is to preserve all key information and entities in the text. 
+
+If there is no any related information, please always answer with this answer:
+NO RELEVANT INFO    
+    
+Complete answer should be exclusively in Serbian language formatted this way:
+
+```
+<all related info text>
+```
 """
 
 
