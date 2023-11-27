@@ -16,7 +16,13 @@ from text_bot.utils import load_documents
 SENTENCE_MIN_LENGTH = 2
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
-from text_bot.views.models import CTDocument, CTDocumentSplit, CTDocumentPage
+from text_bot.views.models import (CTDocument,
+                                   CTDocumentSplit,
+                                   CTDocumentPage,
+                                   CTDocumentSection,
+                                   CTDocumentSubsection,
+                                   CTDocumentSectionText,
+                                   CTDocumentSubsectionText)
 
 from text_bot.nlp_model.prompt_creator import PromptCreator
 from text_bot.ai_utils import get_mmr_cosine_sorted_docs
@@ -31,37 +37,69 @@ class ChatManager:
         self.model = nlp_model
         self.prompt_creator = PromptCreator(nlp_model)
 
-    def send_user_query(self, current_query: str, history_key:str = "") -> dict:
+    # def send_user_query(self, current_query: str, history_key:str = "") -> dict:
+    #     print(" ")
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print("current_query "+current_query)
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print(" ")
+    #     # get_chat_history = self.get_chat_history(history_key)
+    #     query_embedding = self.model.get_embedding(current_query)
+    #     documents = CTDocumentSplit.objects.query_embedding_by_distance(query_embedding)
+    #     documents_list = list(documents)
+    #     doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
+    #
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print("not ranked ")
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print(" ")
+    #     for doc in documents:
+    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #         print(doc.split_text)
+    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #
+    #     print(" ")
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print("ranked ")
+    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     print(" ")
+    #     for doc in doc_for_prompt:
+    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #         print(doc.split_text)
+    #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
+    #     # self.prompt_creator.get_answer(query_embedding, doc_for_prompt)
+
+
+    def send_user_query(self, current_query: str) -> dict:
         print(" ")
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
         print("current_query "+current_query)
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
         print(" ")
-        # get_chat_history = self.get_chat_history(history_key)
-        query_embedding = self.model.get_embedding(current_query)
-        documents = CTDocumentSplit.objects.query_embedding_by_distance(query_embedding)
+
+        three_question_statements_list = self.prompt_creator.get_three_question_statements(current_query)
+
+        embedded_three_question_statements_list = self.model.get_embeddings(three_question_statements_list)
+
+        sections_dict = dict
+        for question_statement_embedded in embedded_three_question_statements_list:
+            sections = CTDocumentSection.objects.query_embedding_by_distance(question_statement_embedded)
+            subsections = CTDocumentSubsection.objects.query_embedding_by_distance(question_statement_embedded)
+            section_full_texts = CTDocumentSectionText.objects.query_embedding_by_distance(question_statement_embedded)
+            subsection_full_texts = CTDocumentSubsectionText.objects.query_embedding_by_distance(question_statement_embedded)
+
+            for section in sections:
+                sections_dict[section.ct_document.id] = section.section_text_value
+            for subsection in subsections:
+                sections_dict[subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
+            for section in section_full_texts:
+                sections_dict[section.ct_document.id] = section.section_text_value
+            for subsection in subsection_full_texts:
+                sections_dict[subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
+
+
         documents_list = list(documents)
         doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
-
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-        print("not ranked ")
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-        print(" ")
-        for doc in documents:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-            print(doc.split_text)
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-
-        print(" ")
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-        print("ranked ")
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-        print(" ")
-        for doc in doc_for_prompt:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-            print(doc.split_text)
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")
-        # self.prompt_creator.get_answer(query_embedding, doc_for_prompt)
 
 
 

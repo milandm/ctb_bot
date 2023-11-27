@@ -129,6 +129,9 @@ class CTDocumentSectionManager(models.Manager):
 
         return ct_document_section
 
+    def query_embedding_by_distance(self, embedding):
+        return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+
 
 class CTDocumentSectionTitleManager(models.Manager):
 
@@ -194,6 +197,9 @@ class CTDocumentSectionTextManager(models.Manager):
             topics_embedding=topics_embedding)
 
         return ct_document_section
+
+    def query_embedding_by_distance(self, embedding):
+        return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
 
 class CTDocumentSectionReferencesManager(models.Manager):
@@ -294,6 +300,9 @@ class CTDocumentSubsectionManager(models.Manager):
 
         return ct_document_subsection
 
+    def query_embedding_by_distance(self, embedding):
+        return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+
 
 class CTDocumentSubsectionTitleManager(models.Manager):
 
@@ -358,6 +367,10 @@ class CTDocumentSubsectionTextManager(models.Manager):
             topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
+
+    def query_embedding_by_distance(self, embedding):
+        return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+
 
 class CTDocumentSubsectionReferencesManager(models.Manager):
 

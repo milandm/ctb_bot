@@ -529,19 +529,21 @@ Output should look like this:
 
 
 
-DOCUMENT_SYSTEM_MSG_QUESTION_PREPARATION_V1 = """
+DOCUMENT_SYSTEM_MSG_QUESTION_STATEMENT_V1 = """
 You are expert for clinical trial research and you should check if given response is correct.
 """
 
-QUESTION_PREPARATION_PROMPT_TEMPLATE_V1 = """
+QUESTION_STATEMENT_PROMPT_TEMPLATE_V1 = """
 Formulate this question as a statement:
 $question 
 """
 
 
-THREE_QUESTION_PREPARATION_PROMPT_TEMPLATE_V1= """
-Formulate this question as a statement in three different ways, export json list:
-$question 
+THREE_QUESTION_STATEMENTS_PROMPT_TEMPLATE_V1= """
+Formulate given question as a statement in three different ways. 
+Export json list of strings:
+
+QUESTION: $question 
 """
 
 QUERY_BASED_COMPRESSION_TEMPLATE_V1 = """
@@ -578,7 +580,6 @@ TEXT_COMPRESSION: <text you compressed>
 $text_to_compress
 
 """
-
 
 # ```json
 # [
@@ -697,6 +698,10 @@ class PromptTemplateCreator:
 
     def get_query_based_text_compression_prompt(self, query: str, document_split: str) -> str:
         user_prompt = self.prepare_template(QUERY_BASED_COMPRESSION_TEMPLATE_V1, query = query, text_to_compress=document_split)
+        return user_prompt
+
+    def get_three_question_statements(self, question: str) -> str:
+        user_prompt = self.prepare_template(THREE_QUESTION_STATEMENTS_PROMPT_TEMPLATE_V1, question=question)
         return user_prompt
 
     def get_document_text_compression_prompt(self, document_split: str) -> str:

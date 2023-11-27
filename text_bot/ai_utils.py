@@ -20,7 +20,7 @@ def get_mmr_cosine_sorted_docs(query_embedding, docs):
     similarity2 = util.pytorch_cos_sim
     return mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2)
 
-def mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2):
+def mmr_sorted(query_embedding, docs_embeddings, lambda_parameter, similarity1, similarity2):
     """Sort a list of docs by Maximal marginal relevance
 
 	Performs maximal marginal relevance sorting on a set of
@@ -40,11 +40,11 @@ def mmr_sorted(query_embedding, docs, lambda_parameter, similarity1, similarity2
 			given in the first argument, ordered my MMR
     """
     selected = OrderedDict()
-    docs = set(docs)
-    while set(selected) != docs:
-        remaining = docs - set(selected)
-        mmr_score = lambda x: lambda_parameter * similarity1(x.embedding, query_embedding) - (1 - lambda_parameter) * max(
-            [similarity2(x.embedding, y.embedding) for y in set(selected) - {x}] or [0])
+    docs_embeddings = set(docs_embeddings)
+    while set(selected) != docs_embeddings:
+        remaining = docs_embeddings - set(selected)
+        mmr_score = lambda x: lambda_parameter * similarity1(x_embedding, query_embedding) - (1 - lambda_parameter) * max(
+            [similarity2(x_embedding, y_embedding) for y in set(selected) - {x}] or [0])
         next_selected = max(remaining, key=mmr_score)
         selected[next_selected] = len(selected)
     return selected
