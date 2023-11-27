@@ -581,6 +581,21 @@ $text_to_compress
 
 """
 
+
+DOCUMENT_SYSTEM_MSG_QUESTION_RELATED_INFORMATION_V1 = """
+You are expert for clinical trial research and you should check if given response is correct.
+"""
+
+QUESTION_RELATED_INFORMATION_PROMPT_TEMPLATE_V1 = """
+QUESTION: $question 
+SECTION_TEXT: $section_text
+
+From given SECTION_TEXT extract ALL!!! information relevant for given QUESTION.
+    1. It is mandatory to keep any related enlisted items!!!
+    2. Highest priority is to preserve all key information and entities in the text. 
+"""
+
+
 # ```json
 # [
 #   {
@@ -702,6 +717,12 @@ class PromptTemplateCreator:
 
     def get_three_question_statements(self, question: str) -> str:
         user_prompt = self.prepare_template(THREE_QUESTION_STATEMENTS_PROMPT_TEMPLATE_V1, question=question)
+        return user_prompt
+
+    def get_question_related_information(self, question: str, section_text: str) -> str:
+        user_prompt = self.prepare_template(QUESTION_RELATED_INFORMATION_PROMPT_TEMPLATE_V1,
+                                            question=question,
+                                            section_text=section_text)
         return user_prompt
 
     def get_document_text_compression_prompt(self, document_split: str) -> str:

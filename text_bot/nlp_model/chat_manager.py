@@ -81,7 +81,7 @@ class ChatManager:
 
         embedded_three_question_statements_list = self.model.get_embeddings(three_question_statements_list)
 
-        sections_dict = dict
+        sections_dict = dict()
         for question_statement_embedded in embedded_three_question_statements_list:
             sections = CTDocumentSection.objects.query_embedding_by_distance(question_statement_embedded)
             subsections = CTDocumentSubsection.objects.query_embedding_by_distance(question_statement_embedded)
@@ -93,13 +93,18 @@ class ChatManager:
             for subsection in subsections:
                 sections_dict[subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
             for section in section_full_texts:
-                sections_dict[section.ct_document.id] = section.section_text_value
+                sections_dict[section.ct_document_section.ct_document.id] = section.section_text
             for subsection in subsection_full_texts:
-                sections_dict[subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
+                sections_dict[subsection.ct_document_subsection.ct_document_section.ct_document.id] = subsection.ct_document_section.section_text_value
 
+        question_related_info_list = list()
+        for key, section_text in sections_dict.items():
+            question_related_info = self.prompt_creator.get_question_related_informations(current_query, section_text)
+            question_related_info_list.append(question_related_info)
 
-        documents_list = list(documents)
-        doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
+        return (', ').join(question_related_info_list)
+        # documents_list = list(documents)
+        # doc_for_prompt = get_mmr_cosine_sorted_docs(query_embedding, documents)
 
 
 

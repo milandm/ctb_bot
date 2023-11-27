@@ -68,9 +68,9 @@ class PublicTextBotAPIView(GenericViewSet):
         chat_manager = ChatManager(OpenaiModel())
 
         input = request.query_params.get('input', '')
-        history_key = request.query_params.get('history_key', '')
+        # history_key = request.query_params.get('history_key', '')
 
-        response = chat_manager.send_user_query(input, history_key)
+        response = chat_manager.send_user_query(input)
 
         if response:
             return Response(response)  # return the data in the DRF Response
