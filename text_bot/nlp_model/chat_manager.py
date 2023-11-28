@@ -83,10 +83,10 @@ class ChatManager:
 
         sections_dict = dict()
         for question_statement_embedded in embedded_three_question_statements_list:
-            sections = CTDocumentSection.objects.query_embedding_in_db(question_statement_embedded)
-            subsections = CTDocumentSubsection.objects.query_embedding_in_db(question_statement_embedded)
-            section_full_texts = CTDocumentSectionText.objects.query_embedding_in_db(question_statement_embedded)
-            subsection_full_texts = CTDocumentSubsectionText.objects.query_embedding_in_db(question_statement_embedded)
+            sections = CTDocumentSection.objects.query_embedding_by_distance(question_statement_embedded)
+            subsections = CTDocumentSubsection.objects.query_embedding_by_distance(question_statement_embedded)
+            section_full_texts = CTDocumentSectionText.objects.query_embedding_by_distance(question_statement_embedded)
+            subsection_full_texts = CTDocumentSubsectionText.objects.query_embedding_by_distance(question_statement_embedded)
 
             for section in sections:
                 sections_dict[section.ct_document.id] = section.section_text_value

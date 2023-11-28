@@ -1,6 +1,6 @@
 from django.db import models
 from sentence_transformers import SentenceTransformer
-from pgvector.django import CosineDistance
+from pgvector.django import CosineDistance, L2Distance
 from text_bot.ai_utils import get_distance_scores, check_distance_scores_out
 
 class TopChatQuestionsManager(models.Manager):
@@ -52,7 +52,12 @@ class UserHistoryManager(models.Manager):
 
 
 # COSINE_DISTANCE_TRESHOLD = 0.15
-COSINE_DISTANCE_TRESHOLD = 0.2
+# COSINE_DISTANCE_TRESHOLD = 0.2
+COSINE_DISTANCE_TRESHOLD = 0.5
+# COSINE_DISTANCE_TYPE = distance__lt
+# COSINE_DISTANCE_TYPE = cosine_distance
+
+
 
 class CTDocumentSplitManager(models.Manager):
 
@@ -71,7 +76,7 @@ class CTDocumentSplitManager(models.Manager):
         return items
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        return self.alias(distance=CosineDistance('embedding', embedding)).filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
 
 
@@ -133,7 +138,11 @@ class CTDocumentSectionManager(models.Manager):
         return self.order_by(CosineDistance('content_summary_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        cosine_distance=CosineDistance('content_summary_embedding', embedding)
+        return self.annotate(cosine_distance=cosine_distance)\
+            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+        # return self.alias(cosine_distance=cosine_distance)\
+        #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
 
 
 class CTDocumentSectionTitleManager(models.Manager):
@@ -205,7 +214,11 @@ class CTDocumentSectionTextManager(models.Manager):
         return self.order_by(CosineDistance('text_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        cosine_distance=CosineDistance('text_embedding', embedding)
+        return self.annotate(cosine_distance=cosine_distance)\
+            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+        # return self.alias(distance=CosineDistance('text_embedding', embedding))\
+        #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
 
 class CTDocumentSectionReferencesManager(models.Manager):
@@ -310,7 +323,11 @@ class CTDocumentSubsectionManager(models.Manager):
         return self.order_by(CosineDistance('content_summary_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        cosine_distance=CosineDistance('content_summary_embedding', embedding)
+        return self.annotate(cosine_distance=cosine_distance)\
+            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+        # return self.alias(distance=CosineDistance('content_summary_embedding', embedding))\
+        #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
 
 class CTDocumentSubsectionTitleManager(models.Manager):
@@ -381,7 +398,11 @@ class CTDocumentSubsectionTextManager(models.Manager):
         return self.order_by(CosineDistance('text_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        cosine_distance=CosineDistance('text_embedding', embedding)
+        return self.annotate(cosine_distance=cosine_distance)\
+            .filter(cosine_distance<=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+        # return self.alias(distance=CosineDistance('text_embedding', embedding))\
+        #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
 
 class CTDocumentSubsectionReferencesManager(models.Manager):
