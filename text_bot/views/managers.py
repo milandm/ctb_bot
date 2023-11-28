@@ -52,9 +52,10 @@ class UserHistoryManager(models.Manager):
 
 
 # COSINE_DISTANCE_TRESHOLD = 0.15
-# COSINE_DISTANCE_TRESHOLD = 0.2
-COSINE_DISTANCE_TRESHOLD = 0.5
-# COSINE_DISTANCE_TYPE = distance__lt
+COSINE_DISTANCE_TRESHOLD = 0.2
+# COSINE_DISTANCE_TRESHOLD = 0.5
+# COSINE_DISTANCE_QUERY = cosine_distance__lt
+# COSINE_DISTANCE_QUERY = cosine_distance__gt
 # COSINE_DISTANCE_TYPE = cosine_distance
 
 
@@ -76,7 +77,8 @@ class CTDocumentSplitManager(models.Manager):
         return items
 
     def query_embedding_by_distance(self, embedding):
-        return self.alias(distance=CosineDistance('embedding', embedding)).filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
+        return self.alias(cosine_distance=CosineDistance('embedding', embedding))\
+            .filter(cosine_distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
 
 
 
@@ -140,7 +142,7 @@ class CTDocumentSectionManager(models.Manager):
     def query_embedding_by_distance(self, embedding):
         cosine_distance=CosineDistance('content_summary_embedding', embedding)
         return self.annotate(cosine_distance=cosine_distance)\
-            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+            .filter(cosine_distance__lt=COSINE_DISTANCE_TRESHOLD)
         # return self.alias(cosine_distance=cosine_distance)\
         #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
 
@@ -216,7 +218,7 @@ class CTDocumentSectionTextManager(models.Manager):
     def query_embedding_by_distance(self, embedding):
         cosine_distance=CosineDistance('text_embedding', embedding)
         return self.annotate(cosine_distance=cosine_distance)\
-            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+            .filter(cosine_distance__lt=COSINE_DISTANCE_TRESHOLD)
         # return self.alias(distance=CosineDistance('text_embedding', embedding))\
         #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
@@ -325,7 +327,7 @@ class CTDocumentSubsectionManager(models.Manager):
     def query_embedding_by_distance(self, embedding):
         cosine_distance=CosineDistance('content_summary_embedding', embedding)
         return self.annotate(cosine_distance=cosine_distance)\
-            .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+            .filter(cosine_distance__lt=COSINE_DISTANCE_TRESHOLD)
         # return self.alias(distance=CosineDistance('content_summary_embedding', embedding))\
         #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
@@ -400,7 +402,7 @@ class CTDocumentSubsectionTextManager(models.Manager):
     def query_embedding_by_distance(self, embedding):
         cosine_distance=CosineDistance('text_embedding', embedding)
         return self.annotate(cosine_distance=cosine_distance)\
-            .filter(cosine_distance<=COSINE_DISTANCE_TRESHOLD).order_by('cosine_distance')
+            .filter(cosine_distance__lt=COSINE_DISTANCE_TRESHOLD)
         # return self.alias(distance=CosineDistance('text_embedding', embedding))\
         #     .filter(cosine_distance=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
