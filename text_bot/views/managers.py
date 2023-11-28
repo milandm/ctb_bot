@@ -64,7 +64,7 @@ class CTDocumentSplitManager(models.Manager):
     #                 embedding=document_embedding)
 
     def query_embedding_in_db(self, embedding):
-        return self.order_by(CosineDistance('embedding', embedding)).all()[:5]
+        return self.order_by(CosineDistance('embedding', embedding)).all()[:20]
 
     def query_embedding_and_filter_out_in_db(self, document_title, embedding):
         items = self.filter(document_title=document_title).order_by(CosineDistance('embedding', embedding))[:5]
@@ -128,6 +128,9 @@ class CTDocumentSectionManager(models.Manager):
             topics_embedding = topics_embedding)
 
         return ct_document_section
+
+    def query_embedding_in_db(self, embedding):
+        return self.order_by(CosineDistance('content_summary_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
         return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
@@ -197,6 +200,9 @@ class CTDocumentSectionTextManager(models.Manager):
             topics_embedding=topics_embedding)
 
         return ct_document_section
+
+    def query_embedding_in_db(self, embedding):
+        return self.order_by(CosineDistance('text_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
         return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
@@ -300,6 +306,9 @@ class CTDocumentSubsectionManager(models.Manager):
 
         return ct_document_subsection
 
+    def query_embedding_in_db(self, embedding):
+        return self.order_by(CosineDistance('content_summary_embedding', embedding)).all()[:20]
+
     def query_embedding_by_distance(self, embedding):
         return self.alias(distance=CosineDistance('content_summary_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
 
@@ -367,6 +376,9 @@ class CTDocumentSubsectionTextManager(models.Manager):
             topics_embedding=subsection_topics_embedding)
 
         return ct_document_subsection
+
+    def query_embedding_in_db(self, embedding):
+        return self.order_by(CosineDistance('text_embedding', embedding)).all()[:20]
 
     def query_embedding_by_distance(self, embedding):
         return self.alias(distance=CosineDistance('text_embedding', embedding)).filter(distance__lt=COSINE_DISTANCE_TRESHOLD).order_by('distance')
