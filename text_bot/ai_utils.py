@@ -17,13 +17,11 @@ import tiktoken
 
 CL100K_BASE_ENCODING_NAME = "cl100k_base"
 
-def num_tokens_from_string(string: str, encoding_name: str) -> int:
+def token_count_from_string(string: str, encoding_name: str = CL100K_BASE_ENCODING_NAME) -> int:
     """Returns the number of tokens in a text string."""
     encoding = tiktoken.get_encoding(encoding_name)
     num_tokens = len(encoding.encode(string))
     return num_tokens
-
-num_tokens_from_string("tiktoken is great!", "cl100k_base")
 
 def get_mmr_cosine_sorted_docs(query_embedding, docs):
     lambda_parameter = 0.5
