@@ -101,12 +101,14 @@ class ChatManager:
 
         sections_list = list()
         for key, section_text in sections_dict.items():
+            print("sections_dict section_text: "+section_text)
             sections_list.append(section_text)
 
         concatenated_section_list =  self.concatenate_prompt_input_list(sections_list)
 
         question_related_info_list = list()
         for section_text in concatenated_section_list:
+            print("concatenated_section_list section_text: " + section_text)
             question_related_info = self.prompt_creator.get_question_related_informations(current_query, section_text)
             question_related_info_list.append(question_related_info)
 

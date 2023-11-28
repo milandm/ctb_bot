@@ -586,7 +586,7 @@ DOCUMENT_SYSTEM_MSG_QUESTION_RELATED_INFORMATION_V1 = """
 You are expert for clinical trial research and you should check if given response is correct.
 """
 
-QUESTION_RELATED_INFORMATION_PROMPT_TEMPLATE_V1 = """
+QUESTION_RELATED_INFORMATION_PROMPT_TEMPLATE_V2 = """
 QUESTION: $question 
 SECTION_TEXT: $section_text
 
@@ -603,6 +603,29 @@ Complete answer should be exclusively in Serbian language formatted this way:
 <all related info text>
 ```
 """
+
+QUESTION_RELATED_INFORMATION_PROMPT_TEMPLATE_V1 = """
+QUESTION: $question 
+SECTION_TEXT: $section_text
+
+From given SECTION_TEXT extract ALL!!! information relevant for given QUESTION.
+    1. It is mandatory to keep any related enlisted items!!!
+    2. Highest priority is to preserve all key information and entities in the text. 
+    3. Enlist with bullet points all important items related to question!!!
+    4. Formulate output as answer to given QUESTION!!!
+
+If there is no any related information, please always answer with this answer:
+NO RELEVANT INFO    
+
+Complete answer should be exclusively in Serbian language!!! (Latin)!!! formatted this way:
+
+```
+ANSWER:  <all related info text>
+```
+PLease check if this ANSWER contains all information requested by QUESTION.
+
+"""
+
 
 
 # ```json
